@@ -18,9 +18,9 @@
 \acmConference{Proceedings on Privacy Enhancing Technologies}
 \settopmatter{printacmref=false,printccs=false,printfolios=true}
 
-\input{../sty/packages.tex}  %<-------------- Add new packages here
-\input{../sty/macros.tex}
-\input{../sty/notation.tex}
+\input{../spa/sty/packages.tex}  %<-------------- Add new packages here
+\input{../spa/sty/macros.tex}
+\input{../spa/sty/notation.tex}
 
 %DIF UNDERLINE PREAMBLE %DIF PREAMBLE
 
@@ -62,7 +62,7 @@
 	%%
 	%% The "title" command has an optional parameter,
 	%% allowing the author to define a "short title" to be used in page headers.
-	\title{Secure Vickrey Auctions with Rational Parties}
+	\title{How to cut cake securely and have it too}
 	
 	%%%%%%%%%%%%%%%% Authors' Info %%%%%%%%%%%%%%%%%
 	%%
@@ -145,11 +145,8 @@
 	%% article.
 
 	\begin{abstract}
-		In this work, we construct a second price (Vickrey) auction protocol (SPA), which does not require any auctioneers and ensures total privacy in the presence of rational parties participating in auction. In particular, the confidentiality of the highest bid value and the identity of the second highest bidder are protected. We model the bidders participating in the second price auction as rational, computationally bounded and privacy sensitive parties. These are self-interested agents who care about winning the auction more than learning about the private bid values of other parties. A rational party does not deviate from the protocol arbitrarily, but does so only for its own individual `advantage' -- without any consideration for others. Such an advantage is modeled using suitable utility functions. 
-		
-		We show that for rational PPT parties participating in our second-price auctions protocol, there exists a privacy-preserving dominant strategy equilibrium in which every party prefers to follow the protocol than to deviate.
-		
-		Our protocol is implemented using open source cryptographic constructs. Running our SPA protocol on commodity hardware with $15$ bidders,  with bids of length $10$ bits,  completes in $1.26$sec and has total communication of $0.77$MB whereas for the same setting, Atlas (semi-honest) protocol takes $2.11$ sec with $6.09$MB of communication.
+		In this work, we construct a secure protocol for the fair division of a certain divisible good -- also known as the cake division problem. We make use of the \emph{Lone divider algorithm} for this purpose. Our protocol ensures fairness as per individual valuations of parties and confidentiality of these  valuations. We prove the fairness and security of our protocol in a malicious adversarial setting. \\
+		Our protocol is implemented using open source cryptographic constructs. Running our fair division protocol on commodity hardware with $15$ bidders completes in $1.26$sec and has total communication of $0.77$MB whereas for the same setting,  semi-honest version of protocol takes $2.11$ sec with $6.09$MB of communication.
 	\end{abstract}
 
  %%
@@ -188,32 +185,19 @@
 %%
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
-	\keywords{Auctions, rational parties, Vickrey auctions, equilibrium}
+	\keywords{fair-division, cake-cutting, lone-divider-method}
 	
 	
 	\maketitle
 	
 	%\input{intro.tex}
-	\section{Introduction} Auctions are mechanisms where buyers compete to purchase goods by bidding. They are characterized by their ability to efficiently allocate goods to those buyers who value them the most, while fetching profit to the sellers. Digital auctions are a billion-dollar industry with companies like Google, Meta etc. running as many auctions daily in order to auction out their ad space. There is hardly any sector that does not use them -- auctions are used for fundraising, spectrum allocations by governments and trading commodities in financial markets. Typically, it is the highest bidder who wins the auction. Depending on the price paid by the winner of the auction, we can have either \emph{first price auctions} where the winner pays the highest bid value or \emph{second price auctions} (Vickrey auctions) where the winner pays the second highest bid value. \\
+	\section{Introduction} 
 	
-	Second price auctions (SPA) are known to be strategy-proof; that is, while participating in second price auctions, the bidders are incentivized to bid their true valuation~\cite{vk09}, without considering the bid values of other parties. This is in contrast to  first price auctions, where bidders may choose their bid values strategically. 
-	
-	Second price auctions satisfy the requirements of both auctioneer and bidders. The auctioneer is able to elicit true valuations from bidders and hence sells the item to the bidder who values the item most. The winning bidder gets to purchase the auctioned item at a discount (compared to its valuation). Often, an important goal for auctions is to ensure the privacy of bid values: for this, there are sealed bid auctions. Privacy is especially critical for second price auctions, where bidders use their true valuation as their bids. The bidders may not want to divulge any information about their bid values. In particular, the highest bidder too would not want to divulge its own bid value. Similarly, while the highest bidder pays the value of the second highest bidder, the latter would wish to keep its own identity secret. A secure second price auction protocol should only output the winner's identity and the second highest bid value: the highest bid value and the identity of the second highest bidder should not be revealed by the protocol, in addition to protecting the confidentiality of losing bids. 
-	
-	When auctions are executed by auctioneers who are trusted, it is rather trivial to ensure such privacy requirements. But such trust is difficult to realize in practice. Moreover, even when privacy is ensured, second price auctions are vulnerable to manipulation by a corrupt auctioneer. An auctioneer can enhance its utility by declaring a higher value for the second highest bid. Hence, designing a protocol that can function without needing an auctioneer is desirable. 
-	
-	All existing protocols for second price auctions either need a trusted auctioneer or use generic Multi Party Computation (MPC) protocols; therefore, they assume some parties to be completely honest. \emph{In this work, we build a protocol secure in the rational setting for second price auctions that guarantees privacy and does not require any trusted auctioneer.} 
-	
-	
-	\paragraph{Rational model.} In traditional cryptography, every party is either honest or malicious. However, there are many scenarios where parties are simply rational agents who have a clearly specified end goal they are trying to achieve. In the case of auctions, for example, it is fair to assume that the primary goal of parties is to win the auction. 
-	At a high level, a rational party deviates from the protocol only if it has something to `gain'.  This gain is defined by a utility function associated with the party.  Assuming all parties are rational, any party participating in an auction protocol would do so to win it. If they cannot win the auction, a secondary goal of a party may be to learn about the bids of other parties involved in a sealed bid auction.  In this work, we construct a privacy preserving protocol for sealed bid second price auction in a rational model.
 	
 	
 	
 	\paragraph{Our contribution.}
-	This work presents a concretely efficient protocol for \emph{Second Price Auction} with guaranteed privacy. Our protocol achieves \emph{Computational Weakly Dominant Strategy Equilibrium} for rational PPT parties without the need for any trusted auctioneer to maintain the privacy of bid values. In our security model, the bidders are modeled as privacy-sensitive, self-interested agents using appropriate utility functions to capture their motivation to maximize their individual utilities. Our protocol ensures that a) playing honestly is indeed the weakly dominant strategy equilibrium for parties and b) when players play honestly, the protocol leaks nothing except for the output -- the highest bidder identity and value of the second highest bid. \\
-	We would like to emphasize that the rational security model is incomparable with standard models like semi-honest and malicious models in MPC. For one, rational model does not consider collusion whereas in both the semi-honest and malicious models, there is a single adversary controlling corrupt parties -- up to certain threshold. Such a threshold assumption implies that there should exist at least some honest parties in the protocol. In contrast, in the rational model we consider, there are \textit{no honest parties}; all parties are rational who might form strategic coalition for better gains.\\
-	We have implemented our protocol in C++ with 2.4k lines of code. We build upon OpenSSL and Boost open-source libraries. Running our rational secure protocol on a commodity hardware (with Intel core i7 processor, 2.9 GH), with $15$ bidders, $10$-bit length bids resulted in $0.77$MB communication and took $1.26$s. We show that our protocol is concretely more efficient than secure second price auction implementations realized using generic MPC protocols.
+	
 	
 	\paragraph{Outline.} The rest of the paper is organized as follows. Related works is presented in Section~\ref{sec-rel-work} where we provide a survey of prior works related to rational security and auctions. Section~\ref{techoverview} presents an overview of our work, specifically highlighting the challenges and design decisions for SPA protocol. Preliminaries are described in Section~\ref{sec-prelim}. Section~\ref{sec-rational-security} describes the rational security model used in our work. Section~\ref{sec-proto-spec-spa} provides a detailed description of the protocol divided into multiple phases. We analyze the strategy space available to rational parties along with security proofs in Section~\ref{sec-rational-strtg}. For each strategy, we argue why it is rational for parties to stay honest. Lastly, we summarize the experimental results in Section~\ref{sec-expt} and conclude.
 	
@@ -227,13 +211,7 @@
 	The work of Miltersen, Nielsen and Triandopoulos \cite{C:MilNieTri09} defined a rational security framework for first price auctions wherein the bidders care more about the monetary payoffs  than learning about bids of other parties. Important contributions of their work are a novel notion of \emph{information utility} and \textit{Privacy enhanced computational Nash Equilibrium} for modeling rational security. They use generic MPC protocols to run the first price  auction and show that their protocol achieves this equilibrium. However, Nash equilibrium ensures honesty for a rational party only when all other parties are also honest. Instead, we make use of stronger notion of dominant strategy equilibrium wherein honest strategy is the best response irrespective of others' strategic choices. Moreover, our solution concept also guarantees privacy by exhibiting a simulator.\\
 	SEAL~\cite{seal19} was a work by Bag, Hao, Shahandashti and Ray, who propose auction protocols without needing auctioneers. They make use of \emph{Anonymous Veto Protocol} (AVP)~\cite{avp06}. FAST~\cite{fast21} is a similar protocol by David, Gentile and Pourpouneh, which also uses AVP. However, both these works have a non-trivial leakage. Their first price auction protocol leaks first few bits of second highest bid value and their second price auction protocol leaks first few bits of highest bid value. Ganesh, Kanukurthi and Shankar have introduced a first price auction protocol without requiring auctioneers but ensuring total privacy in a rational setting in~\cite{gks22}.   
 	
-	\paragraph{Second price auctions.}
-	Brandt introduced the protocol for second price auctions in \cite{brandt01}. In this protocol, the auctioneer is privy to bid values from all parties. This is avoided in the work of Kurosawa and Ogata~\cite{ko02}, who use bit-slice approach with multiple auctioneers, the majority of whom are honest, to determine the highest bid, bit by bit. Work by Nojoumian and Stinson~\cite{ns14}, uses a setting with $m$ bidders and $n$ auctioneers in addition to a trusted party. \\
-	Naor, Pinkas and Sumner~\cite{nps99} require the role of an auctioneer for running the auction, apart from the auction-issuer who sets up the auction. These two entities are expected not to collude. Their protocol uses garbled circuits prepared by the auction-issuer. In a similar setting, Lipmaa, Asokan and Neimi~\cite{lan02} introduce a second price auction protocol which requires the roles of auctioneer and seller who do not collude. They use a pre-specified set of bid values to run auction. \\
-	In the work of Boaz and Herzberg~\cite{ch13}, the auctioneer is not trusted. Instead, a trusted supervisor ensures that the auctioneer does not deviate by running random checks on the computation. Rational setting is used to argue the security. In~\cite{micali14}, Micali and Rabin discuss the prevention of collusion among bidders participating in Vickrey auctions. They incentivize the second highest bidder to stay truthful and thus prevent coullusion among bidders.\\
-	Omote \etal~\cite{FC:OmoMiy02} introduced a protocol using two non-colluding auctioneers -- $AM_1$ and $AM_2$. $AM_1$ is used during the setup stage and $AM_2$ for the computation stage. Similar to Lipmaa \etal~\cite{lan02}, bidders can use only pre-specified points as bid values. Another similar work is by Hso and Miyaji~\cite{hm21}, who use smart contracts to run generalized Vickrey auctions on a pre-specified number of bid points. \\
 	
-	All works mentioned above require the presence of one or more auctioneers and/or some additional entities for running the auction. In some cases, bidders are allowed to choose the bid values only from a pre-specified set of bid values. Our work does not require any auctioneer and has flexibility for bidders to choose their bids.
 	
 	
 	%\input{tech-overview.tex}
@@ -241,188 +219,7 @@
 	\paragraph{Threat model.} 
 	In our rational security model, every party may deviate from the protocol to meet their most desired goal of winning the auction. Other considerations, such as learning information about other parties, do exist but are secondary. Parties can either act in their individual capacity or form strategic coalitions for enhancing their gains. The utility function captures these considerations. %At CCS 2022, Ganesh, Kanukurthi and Shankar~\cite{gks22} built a protocol for first price auctions secure in the rational security model. The authors show that their protocol achieves \emph{privacy enhanced weakly dominant strategy equilibrium}. At a high level, this involves two steps: a) one needs to show that following the protocol is indeed a (weakly) dominant strategy equilibrium for the parties and b) use the simulation paradigm to argue privacy when parties are honest. We show that our second price auction protocol satisfies this equilibrium.
 	
-	\paragraph{Second price auctions: challenges and design overview.}
-	It is tempting to design a SPA protocol as an extension of an existing first price auction (FPA) protocol. However, the computed output and the privacy considerations are quite different for the two protocols. Recall that, in a FPA protocol, the computed output is the highest bid. Thus, it suffices to design a secure computation protocol that identifies the maximum value among the individual bids of parties participating in the protocol. However for SPA, we need to identify the highest bidder without revealing the highest bid and compute second highest bid without revealing the identity of second highest bidder. Attempts to extend the FPA protocol to run SPA have typically resulted in leakage. For instance, SEAL~\cite{seal19}, FAST~\cite{fast21} and ~\cite{gks22} have developed protocols for implementing secure auctions. While SEAL and FAST provide a SPA protocol explicitly, \cite{gks22} can be extended to run SPA\footnote{Run the FPA till end to identify the winner; rerun auction without winner's participation to identify second highest bid.}. However, in each of these three cases the highest bid value gets leaked while running the second price auctions. In our work, we overcome this problem by performing \emph{oblivious winner discovery} and thus protecting the confidentiality of highest bid value and identity of second highest bidder.\\
- 
- Our protocol is divided into two sub-protocols first of which is used for \emph{oblivious winner discovery} (OWD) and second one for computing the second highest bid (SHB). The OWD functionality uses inputs from the bidders to identify the winner. 
-    
- Our choice for OWD is to design a bit-by-bit protocol in which highest bidder learns that it has the highest bid, without any other bidder learning about it. Subsequently, for computing SHB, the highest bidder would need to act in such a way that computed output is the second highest bid value -- with the additional requirement that second highest bidder's identity is not revealed.
-	
-	
-	For this we can consider a sub-protocol that computes the MAX function bit-by-bit using a bulletin board as described next. The parties start by contributing bits from their bid values, MSB onward. In the first round, they learn the OR of the first bit of all parties. If a party has contributed a $0$, but the output of the first round was $1$, it does not have the maximum bid and hence drops out of the ``race". However such a party continues to participate\footnote{The security-deposit collected up front in the protocol ensures such participation} in the protocol and contributes a $0$ bit for all subsequent rounds of computation. This process continues, with parties dropping out of the race once they realize they no longer have the highest bid (MAX) value. Thus, the computed output is the MAX of all inputs, as required for FPA computing (but does not suffice for SPA). This sub-protocol is called the Anonymous Bidding Protocol (ABP) (see Appendix~\ref{proto-abp}). In our work we use ABP which has found applications in prior works such as SEAL~\cite{seal19}, FAST~\cite{fast21} and ~\cite{gks22}.   
-	
-	\begin{figure}[h]
-		\includegraphics[scale=0.28]{protocol-exec-flow.png}
-		\caption{Protocol flow for an arbitrary party}
-		\label{fig-proto-desc}
-	\end{figure}
-	\begin{figure}[h]
-	\includegraphics[scale=0.28]{post-winner-desc.png}
-	\caption{Protocol flow post winner-discovery}
-	\label{fig-proto-post-wd}
-\end{figure}
-	For the case of SPA, our goal is to compute the second highest bid value and not the MAX value -- i.e., we cannot use ABP as is. To enable computation of second highest bid value, the highest bidder too needs to drop out of the race during the ABP run. However, this poses few challenges: \emph{
-	a) we need to ensure the privacy of the highest bid value, i.e., the highest bidder's dropping off must be concealed from all other parties (oblivious winner discovery). 
-	b) once the highest bidder drops off by contributing $0$ bits, the second highest bidder might conclude incorrectly that it is the highest bidder. In other words, the highest bidder should be able to trick the second highest bidder, by design, into believing that it is still in the race!
-	c) lastly, second highest bidder's identity should not get revealed.}
-	
-	We overcome the first challenge by leveraging one key property of the ABP protocol: A party that contributes a $1$ bit can compute \textsc{OR} of inputs of other parties in ABP using the encoded bits of rest of the parties. This allows us to build a ``winner discovery mechanism" where the highest bidder can (privately) learn that it has the highest bid. Moreover, the protocol design is such that, the winner behaves in such a way as to ensure that all other parties remain oblivious to winner discovery. Overcoming the second challenge requires a very intricate use of Oblivious Transfer (OT), Commitments and NIZKs. The last challenge is overcome by ensuring that it is rational for only the highest bidder to claim the auction. Any deviant claimants are detected by winner resolution protocol.\\
-	
-	Here is a high-level overview of our protocol. We begin by making the following observations :
-	\begin{enumerate}
-		\item The protocol runs for $l$ rounds, where $l$ is the number of bits used in binary representation of bids.
-		\item There exists a unique $\bar j\in[l]$ such that bits of the second highest bid are the same as bits of the highest bid for the first $\bar j-1$ rounds.
-		\item In $\bar {j}$th round, highest bid has $1$, whereas second highest bid has $0$.
-		\item In all the rounds after $\bar j$th round, the highest bid identified in $\bar j$th round should be ignored for further computation.
-	\end{enumerate}
-	
-	The round $\bar j$ is the winner discovery round. For privacy of highest bid, we need to ensure that this $\bar j$th round is identified only by the winner and no one else. Further, the highest bidder should get access to the bits of the second highest bid after knowing it has won. Note that this does not pose any privacy threat, as the second highest bid is the protocol output. To achieve these objectives, every round needs to be divided further into two steps. The first one is for every party to know if it is the winner and if so, get access to the bit of second highest bid. The second step is for the highest bidder to match the second highest bid. We achieve this while ensuring every party, other than the highest bidder, is oblivious to whether someone has already won the auction. Specifically, the second highest bidder should not know that it has lost the auction during the protocol. We tackle these challenges by pairwise OT communication among parties. At the end of protocol, we seek proof that each party has acted honestly. 
-	
-	Now we present the design of the protocol, which is divided into 3 main phases:
-	
-	\begin{enumerate}
-		\item \textsc{Set-up Phase}: Each party $P_i$ has private bid value $b_i$. $P_i$ registers for auction by paying a deposit $D$ and receives the public parameters $\mathsf{pp}$. Party $P_i$ commits to bits of its bid value. Commitments are used to generate NIZK proofs to verify the correctness of $P_i$'s computations in the event that $P_i$ does not win the auction.
-  \begin{comment}
-      
-  
-		\begin{center}
-			\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1,scale=0.7, every node/.style={scale=1.2}]
-				
-				\draw   (48,19.18) .. controls (48,8.59) and (56.59,0) .. (67.18,0) -- (277.32,0) .. controls (287.91,0) and (296.5,8.59) .. (296.5,19.18) -- (296.5,90.42) .. controls (296.5,101.01) and (287.91,109.6) .. (277.32,109.6) -- (67.18,109.6) .. controls (56.59,109.6) and (48,101.01) .. (48,90.42) -- cycle ;
-				
-				\draw    (47.2,163.6) -- (78.06,119.24) ;
-				\draw [shift={(79.2,117.6)}, rotate = 124.82] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-				
-				\draw    (143.2,163.6) -- (153.71,121.54) ;
-				\draw [shift={(154.2,119.6)}, rotate = 104.04] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-				
-				\draw    (289.2,159.6) -- (266.16,117.36) ;
-				\draw [shift={(265.2,115.6)}, rotate = 61.39] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-				
-				\draw   (24.66,225.31) .. controls (23.55,222.97) and (22.94,220.4) .. (22.95,217.71) .. controls (23,206.84) and (33.14,198.06) .. (45.62,198.12) .. controls (58.09,198.17) and (68.16,207.03) .. (68.12,217.91) .. controls (68.11,220.6) and (67.48,223.16) .. (66.35,225.49) -- cycle ;
-				
-				\draw   (33.28,184.86) .. controls (33.28,177.54) and (39.11,171.6) .. (46.31,171.6) .. controls (53.51,171.6) and (59.34,177.54) .. (59.34,184.86) .. controls (59.34,192.18) and (53.51,198.12) .. (46.31,198.12) .. controls (39.11,198.12) and (33.28,192.18) .. (33.28,184.86) -- cycle ;
-				
-				\draw   (122.66,226.31) .. controls (121.55,223.97) and (120.94,221.4) .. (120.95,218.71) .. controls (121,207.84) and (131.14,199.06) .. (143.62,199.12) .. controls (156.09,199.17) and (166.16,208.03) .. (166.12,218.91) .. controls (166.11,221.6) and (165.48,224.16) .. (164.35,226.49) -- cycle ;
-				%Shape: Ellipse [id:dp9744217252097183] 
-				\draw   (131.28,185.86) .. controls (131.28,178.54) and (137.11,172.6) .. (144.31,172.6) .. controls (151.51,172.6) and (157.34,178.54) .. (157.34,185.86) .. controls (157.34,193.18) and (151.51,199.12) .. (144.31,199.12) .. controls (137.11,199.12) and (131.28,193.18) .. (131.28,185.86) -- cycle ;
-				%Shape: Chord [id:dp2160282391881323] 
-				\draw   (274.66,221.31) .. controls (273.55,218.97) and (272.94,216.4) .. (272.95,213.71) .. controls (273,202.84) and (283.14,194.06) .. (295.62,194.12) .. controls (308.09,194.17) and (318.16,203.03) .. (318.12,213.91) .. controls (318.11,216.6) and (317.48,219.16) .. (316.35,221.49) -- cycle ;
-				%Shape: Ellipse [id:dp9679921222195755] 
-				\draw   (283.28,180.86) .. controls (283.28,173.54) and (289.11,167.6) .. (296.31,167.6) .. controls (303.51,167.6) and (309.34,173.54) .. (309.34,180.86) .. controls (309.34,188.18) and (303.51,194.12) .. (296.31,194.12) .. controls (289.11,194.12) and (283.28,188.18) .. (283.28,180.86) -- cycle ;
-				%Straight Lines [id:da5499018212725999] 
-				\draw  [dash pattern={on 1.5pt off 7.5pt}]  (192.2,203.6) -- (228.2,203.6) ;
-				
-				% Text Node
-				\draw (79,31) node [anchor=north west][inner sep=0.75pt]  [xscale=0.75,yscale=0.75] [align=left] {$\mathsf{pp}$=\{$q, \displaystyle \grp$, $\displaystyle g,\ h,\ $, $\displaystyle l, \tau$\}\\$\displaystyle  \begin{array}{{>{\displaystyle}l}}
-						c_{ij} =g^{b_{ij}} h^{a_{ij}{}} ,\ \forall i\in [n], \forall j \in [l]\\
-						X_{ij} =g^{x_{ij}} ,\ \forall i\in [ n] ,\ \forall j\in [ l]
-					\end{array}$};
-				% Text Node
-				\draw (3,229) node [anchor=north west][inner sep=0.75pt]  [font=\footnotesize,xscale=0.75,yscale=0.75] [align=left] {$\displaystyle  \begin{array}{{>{\displaystyle}l}}
-						x_{1j} ,\ r_{1j} ,\ a_{1j} ,\ \\
-						\ \ \ \ \mathsf{pp},\ b_{1j}
-					\end{array}$,};
-				% Text Node
-				\draw (256,224) node [anchor=north west][inner sep=0.75pt]  [font=\footnotesize,xscale=0.75,yscale=0.75] [align=left] {$\displaystyle  \begin{array}{{>{\displaystyle}l}}
-						x_{nj} ,\ r_{nj} ,\ a_{nj} ,\ \\
-						\ \ \ \ \mathsf{pp},\ b_{nj}
-					\end{array}$,};
-				% Text Node
-				\draw (105,229) node [anchor=north west][inner sep=0.75pt]  [font=\footnotesize,xscale=0.75,yscale=0.75] [align=left] {$\displaystyle  \begin{array}{{>{\displaystyle}l}}
-						x_{2j} ,\ r_{2j} ,\ a_{2j} ,\ \\
-						\ \ \ \ \mathsf{pp},\ b_{2j}
-					\end{array}$,};
-				% Text Node
-				\draw (161,3.4) node [anchor=north west][inner sep=0.75pt]  [xscale=0.75,yscale=0.75]  {$\underline{BB}$};
-			\end{tikzpicture}
-		\end{center}
-  \end{comment}
-		\item \textsc{Auction Phase}: The protocol proceeds in rounds. A typical round $j$ for an arbitrary party $P_i$ is depicted in Figure~\ref{fig-proto-desc}. In each round, parties run the SPA protocol as follows. 
-		\begin{itemize}
-			\item \textsc{Exchange of encoded bits}: The goal of this step is to enable parties to deduce if they have won the auction. Every pair of parties communicate privately with each other using OT. As a receiver of OT in round $j$, $P_k$ uses $d_{kj}$ as its choice bit where $d_{kj}$ is the bit being contributed for computation by $P_k$ in round $j$. %The choice bit of OT receiver is important to prevent the second highest bidder from knowing it has lost before the last round of ABP ends. 
-			As a sender, $P_k$ uses encoding of $d_{kj}$ as $M^{(1)}$ and $0$-token as $M^{(0)}$ for OT. 
-			%Therefore, whenever the second highest bidder contributes $0$, it has no information about the bid of the winner.
-			
-			\item \textsc{Winner discovery}: Each party checks if it is the only party contributing $1$ in that round. As the OT receiver, every party gets the inputs of other parties and deduces that it has won if \textsc{OR} of other parties' contributing bits is $0$. If so, it concludes that it has won the auction and transitions to \textit{winner} state.
-   
-			\item \textsc{Post winning actions}: (Refer to Figure~\ref{fig-proto-post-wd}.) Here, we introduce one important change for computing $d_{kj}$: after a party knows it has won the auction, it uses $d_{kj}=1$ in all subsequent OT rounds, both as choice bit and for generating $M^{(1)}$. This design choice helps the winner to obtain the contribution bit of the second highest bidder in the current round. This also prevents second highest bidder from assuming that it has the highest bid. As an OT receiver, the winner gets to know the \textsc{OR} of other parties, which is the same as the bit of the second highest bidder. %After a party has concluded that it is the winner, from the following round onward, it writes \textsc{OR} of the other parties to the BB. 
-			
-			\item  Any party that contributes $0$ has no information about the computed value in the current round. It is necessary to make the computed bit known to each party involved in the auction. Hence, every party writes the encoding of its contribution bit to the BB so that all parties involved in the protocol can compute the output of the current round. The winner (if already discovered) writes the same bit as that of second highest bidder.
-   \begin{comment}
-			\begin{center}
-				%\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-				
-				%\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1,scale=0.8, every node/.style={scale=1.3}]
-				
-				
-				\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-				
-				\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1,scale=0.7, every node/.style={scale=1.3}]
-					%uncomment if require: \path (0,281); %set diagram left start at 0, and has height of 281
-					
-					%Flowchart: Alternative Process [id:dp046329102683471346] 
-					\draw   (48,21.57) .. controls (48,12.2) and (55.6,4.6) .. (64.97,4.6) -- (279.52,4.6) .. controls (288.9,4.6) and (296.5,12.2) .. (296.5,21.57) -- (296.5,84.62) .. controls (296.5,94) and (288.9,101.6) .. (279.52,101.6) -- (64.97,101.6) .. controls (55.6,101.6) and (48,94) .. (48,84.62) -- cycle ;
-					%Straight Lines [id:da643896309767152] 
-					\draw    (49.2,151.6) -- (78.12,106.29) ;
-					\draw [shift={(79.2,104.6)}, rotate = 122.55] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-					%Straight Lines [id:da04511702283590768] 
-					\draw    (291.2,152.6) -- (266.22,110.32) ;
-					\draw [shift={(265.2,108.6)}, rotate = 59.42] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
-					%Shape: Chord [id:dp35655643242043] 
-					\draw   (24.66,215.31) .. controls (23.55,212.97) and (22.94,210.4) .. (22.95,207.71) .. controls (23,196.84) and (33.14,188.06) .. (45.62,188.12) .. controls (58.09,188.17) and (68.16,197.03) .. (68.12,207.91) .. controls (68.11,210.6) and (67.48,213.16) .. (66.35,215.49) -- cycle ;
-					%Shape: Ellipse [id:dp27531625949260374] 
-					\draw   (33.28,174.86) .. controls (33.28,167.54) and (39.11,161.6) .. (46.31,161.6) .. controls (53.51,161.6) and (59.34,167.54) .. (59.34,174.86) .. controls (59.34,182.18) and (53.51,188.12) .. (46.31,188.12) .. controls (39.11,188.12) and (33.28,182.18) .. (33.28,174.86) -- cycle ;
-					%Shape: Chord [id:dp2160282391881323] 
-					\draw   (274.66,211.31) .. controls (273.55,208.97) and (272.94,206.4) .. (272.95,203.71) .. controls (273,192.84) and (283.14,184.06) .. (295.62,184.12) .. controls (308.09,184.17) and (318.16,193.03) .. (318.12,203.91) .. controls (318.11,206.6) and (317.48,209.16) .. (316.35,211.49) -- cycle ;
-					%Shape: Ellipse [id:dp9679921222195755] 
-					\draw   (283.28,170.86) .. controls (283.28,163.54) and (289.11,157.6) .. (296.31,157.6) .. controls (303.51,157.6) and (309.34,163.54) .. (309.34,170.86) .. controls (309.34,178.18) and (303.51,184.12) .. (296.31,184.12) .. controls (289.11,184.12) and (283.28,178.18) .. (283.28,170.86) -- cycle ;
-					%Shape: Rectangle [id:dp5041460798645792] 
-					\draw   (135,172) -- (205,172) -- (205,212) -- (135,212) -- cycle ;
-					%Straight Lines [id:da056543615437074424] 
-					\draw    (207.2,190.65) -- (248.2,191.6) ;
-					\draw [shift={(205.2,190.6)}, rotate = 1.33] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-4.9) .. controls (6.95,-2.3) and (3.31,-0.67) .. (0,0) .. controls (3.31,0.67) and (6.95,2.3) .. (10.93,4.9)   ;
-					%Straight Lines [id:da6877982954395949] 
-					\draw    (92.2,198.6) -- (133.2,199.55) ;
-					\draw [shift={(135.2,199.6)}, rotate = 181.33] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-4.9) .. controls (6.95,-2.3) and (3.31,-0.67) .. (0,0) .. controls (3.31,0.67) and (6.95,2.3) .. (10.93,4.9)   ;
-					%Straight Lines [id:da8539916304433743] 
-					\draw    (92.2,181.6) -- (133.2,182.55) ;
-					\draw [shift={(135.2,182.6)}, rotate = 181.33] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-4.9) .. controls (6.95,-2.3) and (3.31,-0.67) .. (0,0) .. controls (3.31,0.67) and (6.95,2.3) .. (10.93,4.9)   ;
-					
-					% Text Node
-					\draw (157,12.4) node [anchor=north west][inner sep=0.75pt]  [xscale=0.75,yscale=0.75]  {$\underline{BB}$};
-					\draw (75,70) node [anchor=north west][inner sep=0.75pt]  [xscale=0.75,yscale=0.75]  {$B_{kj}$};
-					\draw (245,70) node [anchor=north west][inner sep=0.75pt]  [xscale=0.75,yscale=0.75]  {$B_{ij}$};
-					
-					% Text Node
-					\draw (158,184) node [anchor=north west][inner sep=0.75pt]  [xscale=0.75,yscale=0.75] [align=left] {OT};
-					% Text Node
-					\draw (65,157.4) node [anchor=north west][inner sep=0.75pt]  [font=\footnotesize,xscale=0.75,yscale=0.75]  {$M_{kj}^{( 0)} =g^{\omega _{kj}}$};
-					% Text Node
-					\draw (70,203.4) node [anchor=north west][inner sep=0.75pt]  [font=\footnotesize,xscale=0.75,yscale=0.75]  {$M_{kj}^{( 1)} =B_{kj}$};
-					% Text Node
-					\draw (217,172.4) node [anchor=north west][inner sep=0.75pt]  [font=\footnotesize,xscale=0.75,yscale=0.75]  {$cb_{ij},k =d_{ij}$};
-					% Text Node
-					\draw (285,218.4) node [anchor=north west][inner sep=0.75pt]  [xscale=0.75,yscale=0.75]  {$P_{i}$};
-					% Text Node
-					\draw (36.6,224.2) node [anchor=north west][inner sep=0.75pt]  [xscale=0.75,yscale=0.75]  {$P_{k}$};
-				\end{tikzpicture}
-			\end{center}
-   \end{comment}
-		\end{itemize}
-				
-		\item \textsc{Verification phase}:
-		\begin{itemize}
-			\item  The winner comes forward to claim the auction by producing the private keys used for encoding the bit codes.
-			
-			\item Each losing party provides NIZK proof of correct computation for each round, where computed output is $1$. 
-			Each losing party also produces the $0$-tokens for the rounds which have computed output to be $0$. This is to ensure that the parties have used the correct OT choice bit. \\
-			If no party claims the auction, all parties are asked to provide these proofs. 
-			\item In case there are multiple claimants for the auction -- which can happen if there are deviating parties, the protocol has a winner resolution mechanism. In this case, each claimant is asked to open all OT message randomness, which exposes the cheating party.
-			\item Whenever a party's deviation is detected, the protocol terminates and that party forgoes their deposit, which gets distributed among honest parties.
-		\end{itemize}
-	\end{enumerate}
-	
+		
 	\paragraph{Security.} 
 	In order to argue security, we note that a rational party sees value in a) increasing its monetary utility by winning the auction and b) learning information about other players' inputs. To capture these, we use monetary and information utilities (similar to earlier works in~\cite{C:MilNieTri09,gks22}). We also use the notion of \emph{Privacy Enhanced Computational Dominant Strategy Equilibrium} introduced in ~\cite{gks22} for analyzing the privacy concerns of rational parties. This equilibrium states that as long as parties value monetary utility much more than information utility, they have no incentive to deviate from the protocol. Then, for parties that do not deviate from the protocol, we argue privacy using the simulation paradigm.
 
@@ -452,17 +249,7 @@
 	
 	
 	The security of a commitment scheme guarantees two properties: \emph{hiding} and \emph{binding}. Informally, the hiding property guarantees that for any two messages $m_0$ and $m_1$, no PPT algorithm can distinguish between commitments to $m_0$ and $m_1$. The binding property guarantees that no PPT algorithm can open a commitment to two different messages. 
-\begin{comment}
-    We use the \emph{Pedersen Commitment Scheme} that is computationally binding and perfectly hiding. 
-	\begin{definition} [Pedersen Commitment Scheme~\cite{C:Pedersen91}] \label{def-pedersen-commit}
-		The Pedersen Commitment Scheme $\com$ instantiates the Commitment Scheme defined above as: 
-		\begin{itemize}
-			\item $(\grp, q, g, h) \leftarrow \mathsf{Setup}(1^\lambda)$. The $\mathsf{Setup}$ outputs the public parameters used in the commitment scheme.
-			\item $c = \com(m, r) = g^m h^{r}$ where $m \in \zq$, $r \smpl \zq$ is chosen uniformly at random and $c \in \grp$.
-			\item $B = \mathsf{Open}(c, m,r), B \in \{0,1\}$ verifies if $c$ is indeed the right commitment for message $m$ with opening randomness $r$. 
-		\end{itemize}
-	\end{definition} 
-\end{comment} 	
+
 
 	\paragraph{Oblivious transfer.} \label{proto-ot}
 	Oblivious Transfer (OT) is a two-party  protocol with sender $S$ having two secret messages and receiver $R$ with a single choice bit. The goal of the protocol is for $R$ to learn the message of its choice without learning about the other message from the sender. In addition, OT protocol demands that $S$ does not learn about the choice exercised by $R$. We make use of OT for securely sharing messages between parties. Let $\sfm, \sfr$ be the message space and randomness space, respectively. An OT protocol proceeds as follows for two PPT parties, $R$ and $S$:
@@ -481,7 +268,7 @@
 	
 	A BB can be realized through a public chat-room, shared web-page, or even a private blockchain. Our protocol does not rely upon any specific realization of BB.
 	
-	\subsection{Equilibrium notions}
+	\subsection{Fairness notions}
 	We now describe some game theoretic notations and definitions used in our work. We assume that there are $n$ parties $(P_1,\ldots,P_n)$ participating in a game. 
 	
 	\begin{definition}[Normal Form Game~\cite{TCC:Katz08b}] 
@@ -508,47 +295,8 @@
 	
 	A \emph{Dominant Strategy Equilibrium}, whenever it exists, guarantees that every party has a unique \emph{Dominant Strategy} available to it. Thus, each party can realize maximum utility by adopting its \emph{Dominant Strategy}. Since such a strategy becomes a preferred choice for every party, irrespective of the strategic choices of other parties in the game, the chosen strategy profile is an equilibrium.  
 	
-	\section{Rational Security model} \label{sec-rational-security}
-	We model the second price auction to be a game in which participating bidders are rational PPT parties with their individual utility functions. A rational party does not deviate from the protocol arbitrarily, but does so only for its own individual `advantage' -- without any consideration for others. 
-
- \par We consider a setting in which parties value their individual privacy over learning private inputs of other parties. This means, parties would prefer to learn about private inputs of other parties only if there is no loss of individual privacy in the process. 
- \begin{definition}[Privacy sensitive rational party]
-     Let $(P_1, \ldots, P_n)$ be a set of rational PPT parties. A party $P_i$ is said to be \emph{Privacy sensitive rational} if $P_i$ does not prefer to lose its privacy -- even if such a loss would result in gaining information about private inputs of other parties $P_k, k \neq i$.
- \end{definition}
-Such \emph{Privacy sensitive rational parties} would not be forming any collusion in order to learn about other parties' inputs. That is because, collusion incurs loss of privacy for each member of the collusion. However, they would be willing to form collusion to make monetary gains.
- 
-Moreover, for the case of auctions, our utility function will capture the view that the parties are self-interested agents who care most about winning the auction. A \emph{secondary} incentive may be to learn about the private bid values of other parties. To formalize this, we consider monetary utility and information utility~\cite{C:MilNieTri09}. We assume that parties pay a deposit, which they may lose if they are detected to be deviating. The monetary utility is calculated based on this cost and the monetary gain from winning the auction. The information utility captures the fact that parties prefer to reveal as little as possible about their inputs while learning as much as possible about other parties' inputs. 
-
-Since we are considering rational parties, we let the parties choose suitable strategies for enhancing their utilities. The protocol demands that parties choose honest strategy and follow the protocol. However, depending on their utilities, rational parties may choose deviating strategies as well. Moreover, parties can form strategic coalitions for either winning the auction or for learning about private bids of other parties.
 	
-We are interested in those strategies which are self-enforcing on the parties. Such a state, where parties do not have any incentive to deviate from their chosen set of strategies, is also referred to as an \emph{equilibrium}. 
-To demonstrate security in the rational setting, we first show that following the protocol is a weakly dominant strategy equilibrium. Consequently, to show privacy, it suffices to show that when parties do follow the protocol, they learn nothing beyond the output of the protocol. We show this using the existence of a simulator in the ideal world-real world paradigm. 
-	
-	In a work on first price auctions, Ganesh \etal~\cite{gks22} define the solution concept called \emph{Privacy enhanced computational dominant strategy equilibrium} (PECDSE) for analyzing rational security. In short, parties participating in a game, using a cryptographic protocol, prefer to follow the protocol honestly while learning nothing more about the private inputs of other parties than what the protocol outputs. We will use this notion of equilibrium to show the rational security of our protocol. The definition from ~\cite{gks22} is reproduced below.
-	
-	\begin{definition} [Privacy Enhanced Computational Dominant Strategy Equilibrium]\cite{gks22} \label{def-priv-enh-dse}
-		Let $(P_1, \ldots, P_n)$ be a set of rational PPT parties with their respective efficiently computable utility functions $U_i$, while participating in a $n$-party protocol $\Pi$ which computes the functionality $\calf$. Let $\strspc$ denote the space of strategies. Let $\pi_{i} \in \strspc$ be the strategy for $P_i$ of following $\Pi$. Let $\pi_i'\in \strspc$ be an arbitrary, efficiently computable strategy.
-		
-		We say that the protocol $\Pi$ is a \emph{Privacy Enhanced Computational Dominant Strategy Equilibrium} if the following hold with probability  $(1-\mathsf{negl}(\lambda))$, where $\lambda$ is the security parameter. 
-		
-		\begin{enumerate}
-			\item  $\Pi$ is a \emph{Weakly Dominant Strategy Equilibrium} (W-DSE); i.e.,
-			\[U_i(\pi_i', {\pi}_{-i}) \leq U_i(\pi_i, {\pi}_{-i})\] 
-			for all arbitrary efficiently computable ${\pi}_{-i} \in \strspc^{n-1}$.
-			\item When every $P_i, i \in [n]$ uses $\pi_{i} \in \strspc$ as the strategy following $\Pi$, for each $P_i$ there exists a simulator $\cals_{i}^\calf$ such that the view of $P_i$ in a real execution of the protocol is computationally indistinguishable from the output of the simulator:
-			\[\view_i^\Pi \approx_c \cals_{i}^\calf \]
-		\end{enumerate}
-		where $\view_i^\Pi$ is the random variable of the transcript of $P_i$ in the protocol $\Pi$. 
-	\end{definition}
-
-	
-	Thus, in order to show rational security, we show that the following properties hold:
-	\begin{enumerate}
-		\item \textsc{Equilibrium} (Part (1) of Definition~\ref{def-priv-enh-dse}). We first show that the dominant strategy for parties is to follow the protocol. This property relies on the indistinguishability of bit encoding scheme (DDH), binding property of commitment scheme, malicious security of the OT protocol $\Pi_{OT}$ and soundness of NIZK proofs.
-		\item \textsc{Simulation} (Part (2) of Definition~\ref{def-priv-enh-dse}). When parties follow the protocol, we show privacy using the simulation paradigm. Specifically, we show  the existence of a simulator for every party such that the view of the party in the real world is indistinguishable from the output of the simulator. Here we use the hiding property of commitment scheme, semi-honest security of the OT protocol, indistinguishability of bit encoding scheme (DDH) and zero-knowledge property of NIZK proofs. 
-	\end{enumerate}
-
-\subsection{Utilities}
+\subsection{Valuation functions}
   We assume there are $n$ parties that participate in the auction protocol, denoted by $P_1, P_2, \dots, P_n$. Each party $P_i$ has its bid denoted by $b_i$, with a corresponding $l$-bit decomposition  $(b_{i1}||b_{i2}|| \dots || b_{il})$. Let
 	\begin{itemize}[itemsep=.5pt]
 		\item $v_i$: Perceived private valuation of the auction item for $P_i$. 
@@ -569,15 +317,6 @@ To demonstrate security in the rational setting, we first show that following th
 	In addition to monetary considerations, parties are also curious to learn information about the bid values of other parties provided, their own privacy is not compromised in the process. 
 	For this, we consider \emph{information utility} $Z_i$ similar to the notion used in \cite{gks22}. \\
 	
-	The monetary utility function of an individual party $P_i$ from participating in our protocol $\Pi$ is as follows (where $D$ is the security deposit paid by the bidder for participation in the auction):
-	\[U_i = 
-	\begin{cases}
-		v_i - b_s  &\text{$\argmax(\textbf{b}) = i$ and $P_i$ doesn't deviate} 	\\
-		0  &\text{$\argmax(\textbf{b}) \neq i$ and $P_i$ doesn't deviate}\\
-		-D  &\text{$P_i$ deviates and gets caught}\\
-		\frac{D|\adv|}{(n-|\adv|)}  &\text{$P_i$ doesn't deviate, $\adv$ is set of parties caught}\\
-		&\text{ deviating or abort from protocol.}
-	\end{cases}\]
 	
 	In an ideal execution with a trusted party, each party $P_i$ learns the second highest bid value $b_s$ and the identity of the winning party $P_w$. Let this information be valued at $z_i \in \mathbb{R}^+$ by $P_i$. By correctness of our protocol, the information utility realized by $P_i$ by following the protocol honestly is  $z_i$.\\
     Let $A$ be an arbitrary set of parties other than $P_i$ i.e., $A \subseteq [n]\setminus \{i\}$. Let $b_A$ represent the bid values of parties in set $A$. Then $P_i$ would be interested to learn about some function $f(b_A)$. On the other hand, being privacy sensitive, $P_i$ would be wary of some $j\neq i$ such that $P_j$ learns $g(b_i)$ for some function $g$. We capture these considerations as below:
@@ -602,37 +341,38 @@ To demonstrate security in the rational setting, we first show that following th
  
 	%\input{proto-spec}
 	\section{Our protocol}\label{sec-proto-spec-spa}
-	We now present a description of our second price auction protocol $\Pi$, which does not require any auctioneer and guarantees full privacy in the presence of privacy sensitive rational parties.
+	We now present a description of our fair division protocol $\Pi$ which guarantees full privacy in the presence of malicious adversaries.
 	
 	\subsection{Notation}
-	We use a fixed publicly known value of the security deposit amount, $D$, for all parties. This value of $D$ can be, for instance, the reserve price of the auctioned item. We use as building blocks a maliciously secure OT protocol $\Pi_{OT}$, a secure commitment scheme $\com$ and non-interactive zero-knowledge (NIZK) proofs. We use a group $\grp$ of prime order $q$ where the DDH assumption holds. 
+	We use as building blocks a maliciously secure OT protocol $\Pi_{OT}$, a secure commitment scheme $\com$ an integer comparison protocol $\Pi_{IC}$ and non-interactive zero-knowledge (NIZK) proofs. We use a group $\grp$ of prime order $q$ where the DDH assumption holds. 
 	
 
-	The protocol uses a Bulletin Board (BB) for all communication. We use the notation $A_{ij,k}$ to denote the message or random value $A$ generated by the party $P_i$ while interacting with the party $P_k$ during the round $j$. The protocol proceeds in $l$ rounds. In each round $j$, a party $P_i$ computes the bit it contributes, denoted by $d_{ij}$, as per Anonymous Bidding Protocol (ABP). We denote the encoding of $d_{ij}$ as $B_{ij}$. ABP and its bit encoding scheme are described in Appendix~\ref{proto-abp}. The protocol also uses a fixed maximum time $\tau$ that a party gets to post its message, beyond which, the party is considered to have aborted the protocol. We use $[0]_{ij}, [1]_{ij}$ to denote encoding of bits $0$ and $1$ respectively by $P_i$ during round $j$. $\smpl$ denotes uniform sampling from a certain distribution, $\pay$ denotes payment and $\bbwrite$ denotes writing to BB.
+	The protocol uses a Bulletin Board (BB) for all communication. We use the notation $A_{ij,k}$ to denote the message or random value $A$ generated by the party $P_i$ while interacting with the party $P_k$ during the round $j$. We use $[0]_{ij}, [1]_{ij}$ to denote encoding of bits $0$ and $1$ respectively by $P_i$ during round $j$. $\smpl$ denotes uniform sampling from a certain distribution, $\pay$ denotes payment and $\bbwrite$ denotes writing to BB.
 
 
 \subsection{Construction} \label{proto-spec-spa}
-We describe our second price auction protocol as a set of algorithms. During setup phase (Algorithm~\ref{alg:setup}), parties allocate their secret keys, construct commitments and publish the public keys and commitments to the BB.
+We describe our FD protocol as a set of algorithms. During setup phase (Algorithm~\ref{alg:setup}), one of the parties $v_d$ is elected as the \emph{lone divider} who divides the given cake $C$ into $n$ parts which are all equal as per its valuation function $v_d$. Each party evaluates these parts. Then parties allocate their secret keys, construct commitments to their valuations and publish the public keys and commitments to the BB.
 \begin{algorithm}[ht]
 \caption{Setup Phase}
 \label{alg:setup}
-\begin{algorithmic}[1]%\vspace{-0.4cm}
-	\State Each $P_i$:
-    \State $P_i(v_i, b_i)$ // Initialize
-    \State $Deposit \pay D$ // Register for auction
-    \State $\mathsf{pp} =  (\grp, q, g, h,l,\tau)$ // Receive public parameters
-    \For{$j = 1$ to $l$}                    
-        \State $x_{ij}, r_{ij} \smpl \zq$ 
-        \State // Secret keys: $x_{ij}$ for encoding $0$ and $r_{ij}$ for encoding $1$
-        \State $X_{ij} = g^{x_{ij}}$ // Public key
-        \State $a_{ij} \smpl \zq$ // Randomness for commitment
-        \State $c_{ij} = \com(b_{ij}, a_{ij})$ 
-        \State
-        \State $BB \bbwrite (X_{ij}, c_{ij})$
-        \State $Y_{ij} = 
+\begin{algorithmic}[1]
+	\State Each $P_i$ is initialized: $P_i(v_i)$ 
+    \State $\mathsf{pp} =  (\grp, q, g, h,l,\tau, C)$ // Receive public parameters
+    \State Elect one of the parties $P_d$ as the \emph{divider}.
+    \State $P_d$ divides $C$ into $n$ parts such that $v_d(C_i) = v_d(C)/n, \forall i \in [n]$.
+    \State $BB \bbwrite C_i$  // Write to BB.
+    \For{$i = 1$ to $n$, $i \neq d$} 
+    	\For{$j = 1$ to $n$} 
+    		\State Compute $V_{ij} = v_i(C_j)$ for all $j \in [n]$
+    		\State $a_{ij} \smpl \zq$, $c_{ij} = \com(V_{ij}, a_{ij})$     	                   
+        	\State $x_{ij}, r_{ij} \smpl \zq$ 
+        	\State // Secret keys: $x_{ij}$ for encoding $0$ and $r_{ij}$ for encoding $1$
+        	\State $X_{ij} = g^{x_{ij}}$ // Public key
+                \State $BB \bbwrite (X_{ij}, c_{ij})$
+       		\State $Y_{ij} = 
         \dfrac{\prod_{k=1}^{i-1} X_{kj}}{\prod_{k=i+1}^n X_{kj} }$
+        \EndFor
     \EndFor
-    \State $state_i \leftarrow active$
 \end{algorithmic}
 \end{algorithm}
 
@@ -789,195 +529,6 @@ After $l$ rounds of auction phase, verification phase (Algorithm~\ref{alg:verifi
 
 	We show that the above protocol correctly computes the second highest bid in Appendix~\ref{proto-correctness}. In the next section, We analyze the strategies of a party participating in the protocol. We show  that the honest strategy is weakly dominant for any party $P_k$. We then prove that this protocol does not leak anything, other than the protocol output, to any party that does not deviate from the protocol in Appendix~\ref{app:privacy}. Transactions related to security deposit are handled outside the protocol (see Appendix~\ref{app-contract}).
 	
-	%\input{cb.tex}
-	\section{Analysis of strategies of rational parties in the protocol} \label{sec-rational-strtg}
-	
-	At any point during the protocol, a party's action (contribution to protocol) is decided by the strategy and the partial transcript available (view). In our protocol, after the setup phase, the parties go through in $l$-rounds, where each round comprises of three parts, exchanging bit codes through OT, local computation to update state, and writing to BB. Correspondingly, in each round of protocol, every party $P_i$ with strategy $\pi_i$ contributes three types of input, namely, $\cb_{ij,k}, \bcot_{ij,k}\text{ and }\bcbb_{ij}$. Here $\cb_{ij},k$ denotes the choice bit used by the $P_i$ as an OT receiver with $P_k$ in round $j$ of protocol;  $\bcot_{ij},k$ denotes the encoding of $d_{ij}$ that $P_i$ uses as OT sender in round $j$ with $P_k$, and $\bcbb_{ij}$ is the encoding of $d_{ij}$ that $P_i$ writes on BB in round $j$. There is a unique honest strategy for each party. We describe all other strategies of a party as deviations from the honest strategy. One particular deviating strategy for party $P_i$ is to form collusion with any other party $P_k$. 
-	
-	We will denote the action selected by  $P_i$ in round $j$ using honest strategy $\pi_i$  while interacting with $P_k$ as $s_{ij,k}$ and action selected using deviating strategy as $s_{ij,k}'$. We also denote the winner discovery round by $\bar{j}$. 
-	%An action set $S_i$ for a party $P_i$ is the tuple of actions chosen during the protocol execution $S_i = (s_{ij,k}), j \in [l], k \in [n]\setminus \{i\}$. 
-	The Table~\ref{tab-strategies} summarizes the honest and deviant actions which are described subsequently. For example, suppose $P_i$ is interacting with $P_k$ during round $j$. Then an action $t_{a\rightarrow b} \in \{\cb_{ij,k}, \bcot_{ij,k}, \bcbb_{ij}\}, a,b \in \{0.1\}$ means $P_i$ is supposed to use the bit $a$ in honest run of protocol, but chooses the bit $b$. 
-	In each case, we show that, the parties realize the best utility by following the protocol honestly.
-	
-	\begin{table}[H]
-		\footnotesize
-		\begin{minipage}{0.45\textwidth} 	
-			\begin{tabular}{|p{3.1cm}|p{2cm}|p{2cm}|}
-				\hline
-				&  {\bf Actions using honest strategy}&{\bf Actions using dishonest strategy}\\	
-				\hline
-				{\bf Choice bit selection} & $\cb_\oo,\cb_\zz$ &$\cb_\oz,\cb_\zo$\\
-				\hline
-				{\bf Bit code sent to other parties using OT} & $\bcot_\oo,\bcot_\zz$ &$\bcot_\oz,\bcot_\zo$ \\
-				\hline
-				{\bf Bit codes written to BB} &$\bcbb_\oo, \bcbb_\zz$    &$\bcbb_\oz,\bcbb_\zo$\\
-				\hline
-			\end{tabular}
-			\caption{Actions available for parties. }
-			\label{tab-strategies}
-		\end{minipage}
-		
-	\end{table}
-	
-	\paragraph{Remark 1:} We consider only those actions of parties that affect the outcome of the protocol. However, there are other actions available to the party: sampling non-uniform randomness, opening invalid $0$-tokens and aborting. However, each of these is an outright irrational choice. For instance, sampling non-uniform randomness (e.g. for private keys) would potentially leak the bid value of the deviating party. Similarly, opening  invalid $0$-tokens is easily caught because of commitments to $0$-tokens (step \ref{prf-loser-choice-bit} of verification phase). Lastly, abort results in loss of security deposit. Such irrational actions are not considered for the ensuing discussion on rational security.
-	
-	\paragraph{Remark 2:} Only the highest bidder can come forward to claim the auction by paying the computed output. This is because, for any other bidder participating in a second price auction, it is not rational to pay the second highest bid value. \\
-	
-	
-	\noindent We first prove a result that would be useful for subsequent proofs.
-	\begin{lemma}\label{lem-diff-bitcode}
-		Let $P_k$ be an arbitrary party who uses actions $\bcot_{a \rightarrow b}$ and $\bcbb_{a \rightarrow d}$ such that $b \neq d$ during some round $j$. Let $P_i$ be the honest party who uses $d_{ij} = 1$. 
-		Assuming that $\Pi_{OT}$ is a maliciously secure OT protocol, $P_i$ will successfully identify $P_k$'s cheating with overwhelming probability. 
-	\end{lemma}
-	
-	\begin{proof}
-		Consider a cheating party $P_k$ who uses actions $\bcot_{a \rightarrow b}$ and $\bcbb_{a \rightarrow d}$ such that $b \neq d$ during some round $j$. Then the party $P_i$ with $d_{ij} = 1$ can show that $P_k$ has indeed sent some bit code during OT and written another bit code to BB as described in step~\ref{alg:cheater-detection} cheater detection part of the protocol specification. 
-		
-		Firstly we claim that no cheating party $P_i$ can implicate an honest party $P_k$. Suppose, on the contrary, that $P_i$ claims $P_k$ is cheating. 
-		In response, honest $P_k$ successfully opens its OT sender randomness $\gamma_{kj,i}$ such that $\ots_{kj, i} = \mathsf{OT.S}\left(\otr_{ij,k}^1, M_{kj,i}^{(0)}, B_{kj}, \gamma_{kj,i}\right)$. 
-		Now $P_i$ has to produce a valid bit code $B_{kj}'$ to have been received from $P_k$ through OT, such that, 
-		\begin{align*}
-			&B_{kj}'= \mathsf{OT.R}_2(\ots_{kj, i},\beta_{ij,k}')\\
-			&\implies \ots_{kj, i} = \mathsf{OT.S}\left(\otr_{ij,k}^1, M_{kj,i}^{(0)}, B_{kj}', \gamma_{kj,i}\right)
-		\end{align*}
-		However, this would contradict the correctness of $\Pi_{OT}$.
-		
-		Likewise, cheating $P_k$ can not refute honest $P_i$'s claim by producing different sender randomness to show that the two bit codes are the same. Again, suppose on the contrary that $P_k$ is able to produce two different OT sender randomness $\gamma_{kj,i}, \gamma_{kj,i}' \in \sfr$ such that
-		\begin{align*}
-			\ots_{kj, i} &= \mathsf{OT.S}\left(\otr_{ij,k}^1, M_{kj,i}^{(0)}, B_{kj}, \gamma_{kj,i}\right)\\
-			&= \mathsf{OT.S}\left(\otr_{ij,k}^1, M_{kj,i}^{(0)}, B_{kj}', \gamma_{kj,i}'\right)
-		\end{align*}
-		This means OT sender $P_k$ is able to produce two different OT sender randomness, both of which generate the same OT sender message $\ots_{kj, i}$ for two different messages $B_{kj}, B_{kj}'$ -- contradicting the correctness of $\Pi_{OT}$. 
-	\end{proof}
-	
-	\subsection{Choice bit selection} If $state=active$, each party $P_i$ uses bit $d_{ij}$ derived from ABP as its choice bit during round $j$. If $state=winner$, the party chooses $1$ as the choice bit and if $state=loser$, the party chooses $0$ as the choice bit. Let us denote a party's action by $\cb_{a \rightarrow b}$.  A deviating party can choose the choice bit for learning  bit codes from other parties. Thus each party has the following actions available: $\{\cb_\zz, \cb_\oo, \cb_\oz, \cb_\zo\}$ during a particular round for choice bit selection.
-	
-	\begin{lemma} \label{lem-cb-info-utility}
-		For any rational PPT party $P_i$, let  
-		$\pi_i$ be the honest strategy, and $\pi_i'$ be the strategy in which $P_i$ deviates using either $\cb_\oz$ or $\cb_\zo$ in some arbitrary round $j$. Then, assuming that DDH assumption holds in $\grp$, $\com$ is a secure commitment scheme and $\Pi_{OT}$ is maliciously secure OT, the strategy $\pi_i$ weakly dominates the strategy $\pi_i'$  for all $i \in [n]$ during all rounds $1 \leq j \leq l$ as per the \emph{Weakly dominant strategy equilibrium} Definition~\ref{def-wdse}. 
-	\end{lemma}
-	
-	\begin{proof}
-		We first note that any strategy followed by $P_i$ for choice bit selection only affects the view of $P_i$, and the view of all other parties remains unaffected. Suppose $P_i$ uses a cheating strategy while interacting with another party $P_k$. I.e., $s_{ij,k}\in\{\cb_\oz, \cb_\zo\}$,  for arbitrary $i$, $j$ and $k$ with $i\neq k$. The following cases can occur:
-		\begin{itemize}
-			\item $\cb_\oz$:  Suppose $j< \bar{j}$, where $\bar{j}$ is the ``winning round". Then, $P_i$ will not be able to perform winner discovery (step ~\ref{compute-or-of-others} in the winner discovery sub-phase) as it has not received the correct bit codes. In this case, the following can occur:
-			\begin{itemize}
-				\item If $P_i$ does not cheat in $\bcot_{ij,k}$ and $\bcbb_{ij}$, then there is no change in view of other parties, and this does not affect the protocol. In this case, there is no change in gain in the utility of $P_i$.
-				\item If $P_i$ cheats in $\bcot_{ij,k}$ and/or $\bcbb_{ij}$, then we will show in the next lemmas that there is a loss in the utility of $P_i$.
-			\end{itemize}
-			On the other hand, if $j\geq \bar{j}$, $P_i$ will not be able to execute its honest strategy in round $j$ for BB phase ($P_i$ can not do step ~\ref{compute-or-of-others} in winner discovery sub-phase as $P_i$ does not receive the contribution of $P_k$). Therefore, with non-zero probability, $P_i$ cheats in $\bcot_{ij,k}$ and/or $\bcbb_{ij}$.
-			In both the above cases, $P_i$'s utility is no better than staying honest, i.e., $\forall i \in [n], k \neq i$:
-			\begin{align*}	
-				U_i(\pi_i', \hat{\pi}_{-i})_{s_{ij,k}' = \cb_\oz} \leq U_i(\pi_i, \hat{\pi}_{-i})_{s_{ij,k} = \cb_\oo}
-			\end{align*}
-			\item $\cb_\zo$: In this case, observe that $P_i$ will be caught if $P_i$ does not claim the auction, as $P_i$ will not be able to provide $0$-token for round $j$, if $b_{sj} = 0$ (Verification phase step~\ref{prf-loser-choice-bit} in the protocol). On the other hand, if $b_{sj} = 1$, it doesn't learn any extra information than while being honest. Thus, $\forall i \in [n], k \neq i$:
-			\begin{align*}	
-				U_i(\pi_i', \hat{\pi}_{-i})_{s_{ij,k}' = \cb_\zo} \leq U_i(\pi_i, \hat{\pi}_{-i})_{s_{ij,k} = \cb_\zz}
-			\end{align*}
-			So, let us consider the case when $P_i$ claims the auction. Following are the two cases that can occur:
-			\begin{itemize}
-				\item $P_i$ is the actual winner: In this case $d_{kj}=0,\forall k\neq i$. Since $P_i$ would have anyway learned the encoding of other parties' bits from the BB round, $P_i$ does not gain any information  utility in this case.
-				\item $P_i$ is not the actual winner: In this case, there is a player $P_w$ with a bid higher than $P_i$ and $w\neq i$. The following cases can occur:
-				\begin{itemize}
-					\item Protocol output (price of the auction) $<b_w$: In this case, if $P_w$ will also claim the auction if it is honest. $P_i$'s cheating will be caught at step ~\ref{prf-resolve-winner} in verification phase. Hence the monetary utility of $P_i$ reduces in this case.
-					\item Protocol output (price of the auction) $\geq b_w$: In this case, $P_i$ has to pay more than $b_i$ and hence its monetary utility decreases.
-				\end{itemize}
-			\end{itemize}
-			From the above cases, we have $\forall i \in [n], k \neq i$:
-			\begin{align*}	
-				U_i(\pi_i', \hat{\pi}_{-i})_{s_{ij,k}' = \cb_\zo} \leq U_i(\pi_i, \hat{\pi}_{-i})_{s_{ij,k} = \cb_\zz}			
-			\end{align*}       
-			To argue that honestly following the protocol is a weakly dominant strategy, consider the strategy set $\hat{\pi}_{-i}$ wherein at least one other party $P_k$ deviates using the action $\cb_\zo$ during every round, i.e., $s_{kj,i}' = \cb_\zo, \forall j \in [l], i \neq k$. In this case, if $P_i$ chooses to be honest, $P_i$ is guaranteed to get the security deposit redistribution of a cheater. On the other hand, $P_i$'s deviation would result in either losing the auction or getting caught to lose the security deposit. Thus in this case, \[U_i(\pi_i', \hat{\pi}_{-i}) < U_i(\pi_i, \hat{\pi}_{-i}), \forall i \in [n]\]        
-			Thus $P_i$'s weakly dominant strategy is to stay honest and use actions $s_{ij,k} \in \{\cb_\zz, \cb_\oo\}$, $\forall k \in [n]$ for all rounds $j \in [l]$, irrespective of the strategies $\hat{\pi}_{-i}$ of other parties. Thus we have,      
-			\[U_i(\pi_i', \hat{\pi}_{-i}) \leq U_i(\pi_i, \hat{\pi}_{-i}), \forall i \in [n]\]  
-		\end{itemize}
-	\end{proof}
-	
-	%\input{bcot.tex}
-	\subsection{Bit codes sent to other parties using OT}
-	Each party shares its bit codes through OT to all other parties during each round. Only parties using a $1$ as the choice bit can retrieve these bit codes for their local computation. We denote this action by $\bcot_{a \rightarrow b}$. A deviating party can choose to send bit codes so as to learn the highest bid value. Thus each party has the following actions available to it: 
-	$\{\bcot_\zz, \bcot_\oo, \bcot_\oz, \bcot_\zo\}$ during each round.
-	
-	\begin{lemma} \label{lem-bcot-mon-utility}
-		For any rational PPT party $P_i$, let  
-		$\pi_i$ be the honest strategy, and $\pi_i'$ be the strategy in which $P_i$ deviates using either $\bcot_\oz$ or $\bcot_\zo$ in some round. Then, assuming that DDH assumption holds in $\grp$, $\com$ is a secure commitment scheme, $\Pi_{OT}$ is a maliciously secure OT, NIZK proofs are sound, the strategy $\pi_i$ weakly dominates the strategy $\pi_i'$  for all $i \in [n]$ during all rounds as per the \emph{Weakly dominant strategy equilibrium} Definition~\ref{def-wdse}.
-	\end{lemma}
-	
-	\begin{proof}
-		Consider an arbitrary round $j$. Party $P_i$ does not have any information about $d_{kj}$ for any $k\neq i$ before the OT round. Therefore, the choice of $\bcot_{ij,k}$ is independent of $d_{kj}$. Now, the following cases can arise:
-		\begin{itemize}
-			\item $d_{kj}=0$: In this case, if $P_k$ is honest in $\cb_{kj,i}$ selection, then choice of $\bcot_{ij,k}$ makes no difference in the protocol. Hence, deviating $P_i$ does not gain any utility in this case. On the other hand, if $P_k$ cheats, $P_k$ will not be able to produce $0$-token for the round and will get caught (step ~\ref{prf-loser-choice-bit} in the protocol). In such a case, $P_i$ would get the redistribution of the security deposit if it does not get caught and loses the security deposit if gets caught. In either case, $P_i$'s utility does not increase by cheating.
-			\item $d_{kj}=1$: In this case, if $P_k$ chooses to cheat in $\cb_{kj,i}$ selection, then $P_i$'s utility remains at most as much as its utility without cheating; but in case $P_k$ is honest in the selection of $\cb_{kj,i}$, then by Lemma ~\ref{lem-diff-bitcode}, $P_k$ can catch the cheating behavior of $P_i$ if $P_i$ does not cheat in $\bcbb_{ij}$. If $P_i$ cheats in $\bcbb_{ij}$, then $P_i$ would fail to provide accepting NIZK. Either way $\forall i \in [n], k \neq i$ and $a \neq b$,
-		\end{itemize}
-		\begin{align*}	
-			U_i(\pi_i', \hat{\pi}_{-i})_{(s_{ij,k} =  \bcot_{a\rightarrow b})} \leq
-			U_i(\pi_i, \hat{\pi}_{-i})_{(s_{ij,k} =  \bcot_{a\rightarrow a})}
-		\end{align*}
-		Lastly, consider the strategy set $\hat{\pi}_{-i}$ wherein at least one other party $P_k$ uses the action $\bcot_\zo$ during every round, i.e., $s_{kj,i}' = \bcot_\zo, \forall j \in [l], i \neq k$. In this case, if $P_i$ chooses to be honest, $P_i$ is guaranteed to get the security deposit redistribution of a cheater. On the other hand, $P_i$'s deviation would result in either losing the auction or getting caught to lose the security deposit. Thus in this case, \[U_i(\pi_i', \hat{\pi}_{-i}) < U_i(\pi_i, \hat{\pi}_{-i}), \forall i \in [n]\]
-		Thus $P_i$'s weakly dominant strategy is to stay honest and choose $s_{ij,k} \in \{\bcot_\zz, \bcot_\oo\}$ for all rounds $j \in [l]$ while interacting with all parties $k \in [n], k \neq i$, irrespective of the strategies $\hat{\pi}_{-i}$ of other parties. Hence we have,
-		\[U_i(\pi_i', \hat{\pi}_{-i}) \leq U_i(\pi_i, \hat{\pi}_{-i}), \forall i \in [n]\] 
-		
-	\end{proof}
-	
-	%\input{bcbb.tex}
-	\subsection{Bit codes written to BB} Towards the end of each round, every party writes the bit codes used for computation during that round onto BB. This is to facilitate the computation of the auction-price bit for the round. The actions chosen by a party for this step are denoted by $\bcbb_{a \rightarrow b}$ where $a,b \in \{0,1\}$. Since each party evaluates the computed bit using bit codes on BB to decide whether it stays in the race or not, these actions are decisive. Thus each party has the following actions available to it: $\{\bcbb_\zz, \bcbb_\oo, \bcbb_\oz, \bcbb_\zo\}$ during each round.
-	We would like to emphasize that no bidder can use the action $\bcbb_\zo$ to become a winner. This is because, writing to the BB does not affect winning chances, but only affects the price to be paid for the auction. Moreover, deviating actions $\bcbb_\zo, \bcbb_\oz$ do not help to fetch any extra information than while being honest.
-	
-	\begin{lemma} \label{lem-bcbb-mon-utility}
-		For any rational PPT party $P_i$, let  
-		$\pi_i$ be the honest strategy, and $\pi_i'$ be the strategy in which $P_i$ deviates using either $\bcbb_\oz$ or $\bcbb_\zo$ in some round. Then, assuming that DDH assumption holds in $\grp$, $\com$ is a secure commitment scheme and NIZK proofs are sound, the strategy $\pi_i$ weakly dominates the strategy $\pi_i'$  for all $i \in [n]$ during all rounds as per the \emph{Weakly dominant strategy equilibrium} Definition~\ref{def-wdse}.
-	\end{lemma}
-	\begin{proof}
-		Note that any party $P_i$ that cheats in $\bcbb_{ij}$ and does not claim the auction  gets caught because they cannot provide an accepting NIZK (in step ~\ref{proto-nizk} of the verification phase of protocol). 
-		\[U_i(\pi_i', \hat{\pi}_{-i}) \leq U_i(\pi_i, \hat{\pi}_{-i}), \forall i \in [n]\]   
-		So the only case to be considered is if $P_i$ cheats in $\bcbb_{ij}$ and claims the auction. The following cases can occur:
-		\begin{itemize}
-			\item $\bcbb_\zo$: In this case, the computed value (the auction price) is more than $P_i$'s bid. Hence $P_i$ will lose monetary utility $\forall i \in [n], k \neq i$:
-			\[U_i(\pi_i', \hat{\pi}_{-i})_{(s_{ij,k} =  \bcbb_\zo)} < 
-			U_i(\pi_i, \hat{\pi}_{-i})_{(s_{ij,k} =  \bcbb_\zz)} \]
-			\item $\bcbb_\oz$: 
-			Firstly, observe that this case can occur only when $j \neq \bar{j}$. However, in this case, there exists at least another party $P_k$ with $d_{kj} =1$. If $P_k$ is honest, the computed output will be $1$ and hence $P_i$ would not be able to provide winning proof as described in step~\ref{winner-proof} of the verification phase and loses deposit. If $P_k$ is dishonest, $P_i$'s utility would be no better than staying honest. Hence $\forall i \in [n], k \neq i$:
-			\[U_i(\pi_i', \hat{\pi}_{-i})_{(s_{ij,k} =  \bcbb_\oz)} \leq 
-			U_i(\pi_i, \hat{\pi}_{-i})_{(s_{ij,k} =  \bcbb_\oo)} \]
-		\end{itemize}
-		Thus $P_i$'s weakly dominant strategy is to honestly choose $s_{ij,k} \in $ $\{\bcbb_\zz, \bcbb_\oo\}$, $\forall k \in [n]$ for all rounds $j \in [l]$, irrespective of the strategies $\hat{\pi}_{-i}$ of other parties.
-		Thus for all $i \in [n]$ we have:
-		\[U_i(\pi_i', \hat{\pi}_{-i}) \leq U_i(\pi_i, \hat{\pi}_{-i})\]
-	\end{proof}
-
- \subsection{Colluding parties}
- Each party $P_i$ can strategically form collusion with other parties. The intent of collusion can be either to win the auction or gain information related to bids of other parties. We denote the collusion strategy by $\coll$ where $\calc$ is the set of colluding parties. The utilities of the collusion can be written as follows:
- \begin{itemize}
-     \item {\bf Monetary utility} of the collusion is the sum of individual monetary utilities of its members. I.e., $U_\calc = \sum_{i \in \calc} U_i$.
-
-     \item {\bf Information utility} of the collusion $Z_\calc$ is a function of individual information utilities of parties $(P_{i_1}, \dots, P_{i_m})$ in collusion. $Z_\calc = f(Z_{i_1}, \dots, Z_{i_m})$ where the function $f$ satisfies the property that $f(Z_{i_1}, \dots, Z_{i_m}) > f(Z_{i_1}', \dots, Z_{i_m}')$ if and only if $\exists i_k \in \{i_1,\dots, i_m\}$ such that $Z_{i_k} > Z_{i_k}'$. E.g. $P_{i_k}$ has learnt some information about the bids of parties who are not part of collusion $\calc$.
- \end{itemize}
- We now show that when parties collude together, they can not gain while participating in the protocol.
-\begin{lemma} \label{lem-collusion}
-		For any privacy sensitive rational PPT party $P_i$, let  
-		$\pi_i$ be the honest strategy, and $\pi_i'$ be the strategy in which $P_i$ deviates using either $\coll$ in some round. Then, assuming that DDH assumption holds in $\grp$, $\com$ is a secure commitment scheme and NIZK proofs are sound, the strategy $\pi_i$ weakly dominates the strategy $\pi_i'$  for all $i \in [n]$ during all rounds as per the  Definition~\ref{def-wdse}.
-	\end{lemma}
- \girisha{Need to move  this proof to Appendix to save space}
-\begin{proof}
-    Let $\calc = \{P_{i_1}, \dots, P_{i_m}\}$ be a collusion. We will argue that $\calc$ can not make gains either in monetary or information utility. 
-    \begin{enumerate}
-        \item {\bf Monetary utility}: Suppose that collusion $\calc$ decides to deviate in some round $j$. This means, at least one of the parties in $\calc$ has to deviate while using the actions: $\cb, \bcot, \bcbb$. However, as proved in the Lemmas~\ref{lem-cb-info-utility}, \ref{lem-bcot-mon-utility}, \ref{lem-bcbb-mon-utility} such a deviation is detected and party loses its security deposit. Such deviations are dominated by honest execution of protocol actions. The same holds for every party in the collusion $\calc$. Hence the collusion $\calc$ can not take any deviating action which benefits the collusion. Thus collusion as a strategy for any party for the sake of monetary gains is dominated by acting individually.
-
-        \item {\bf Information utility}: Now let us consider the case when parties do not deviate, but utilize pool of their views of protocol to lean about bids of parties not part of collusion. We will consider two sub cases here.
-        \begin{itemize}
-            \item {Second highest bidder is not in $\calc$}: In this case, even if all remaining parties collude together, the best they can learn from the protocol is the bits of second highest bid -- which is the output of protocol. \\
-            However, from Equation~\ref{eqn-info-util}, we have that each $P_{i} \in \calc$ would end up with negative information utility since other parties in $\calc$ can learn about $P_{i}$'s private inputs. Since we are considering privacy sensitive parties, the collusion can not be formed in the first place.
-            \item {Second highest bidder is in $\calc$}: In this case, parties in $\calc$ can learn about the first few bits (leakage bits) of highest bid among the parties not part of collusion $\calc$. However, in the process, privacy of parties in $\calc$ is lost. In particular, second highest bidder's identity gets compromised. This holds even if the parties in $\calc$ were to run a MPC to compute the leakage bits. Assuming that second highest bidder is privacy sensitive, it can not be part of $\calc$. Since, no party would know up front if it is second highest bidder or not, it would continue to stay away from being in collusion.
-        \end{itemize}
- 
-    \end{enumerate}
-    
-     Thus, collusion as a strategy, is dominated by acting individually.
-    
- \end{proof}
-
-    
-	We are now ready to prove the main result for rational security which follows from the above Lemmas~\ref{lem-cb-info-utility}, \ref{lem-bcot-mon-utility},  \ref{lem-bcbb-mon-utility} and \ref{lem-collusion}.
 	\begin{theorem}\label{thm-dom-str}
 		Let  $P_i, i \in [n]$ be any PPT party participating in the second price auction protocol $\Pi$ described in Section~\ref{proto-spec-spa}. Then, assuming that the DDH assumption holds in $\grp$, $\com$ is a secure commitment scheme and $\Pi_{OT}$ is a malicious secure OT implementation, the protocol $\Pi$ is a weakly dominant strategy equilibrium as per Definition ~\ref{def-wdse}. 
 	\end{theorem}
@@ -1027,10 +578,10 @@ After $l$ rounds of auction phase, verification phase (Algorithm~\ref{alg:verifi
 		
 	\end{table}
 	\begin{figure}[h]
-		\includegraphics[scale=0.4]{../chart-1.png}
+	%	\includegraphics[scale=0.4]{../chart-1.png}
 	\end{figure}
 	\begin{figure}[h]
-		\includegraphics[scale=0.4]{../chart-2.png}
+	%	\includegraphics[scale=0.4]{../chart-2.png}
 		\caption{Protocol Run times vs number of bidders}
 		\label{fig-perf-plot}
 	\end{figure}
