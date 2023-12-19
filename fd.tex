@@ -18,9 +18,9 @@
 \acmConference{Proceedings on Privacy Enhancing Technologies}
 \settopmatter{printacmref=false,printccs=false,printfolios=true}
 
-\input{../spa/sty/packages.tex}  %<-------------- Add new packages here
-\input{../spa/sty/macros.tex}
-\input{../spa/sty/notation.tex}
+\input{sty/packages.tex}  %<-------------- Add new packages here
+\input{sty/macros.tex}
+\input{sty/notation.tex}
 
 %DIF UNDERLINE PREAMBLE %DIF PREAMBLE
 
@@ -297,47 +297,7 @@
 	
 	
 \subsection{Valuation functions}
-  We assume there are $n$ parties that participate in the auction protocol, denoted by $P_1, P_2, \dots, P_n$. Each party $P_i$ has its bid denoted by $b_i$, with a corresponding $l$-bit decomposition  $(b_{i1}||b_{i2}|| \dots || b_{il})$. Let
-	\begin{itemize}[itemsep=.5pt]
-		\item $v_i$: Perceived private valuation of the auction item for $P_i$. 
-		
-		\item $b_i$: Bid value of party $P_i$. Each bid value is a $l$ bit integer. Note that, for second price auctions, rational bidders prefer to use $b_i = v_i$~\cite{vk09}. We denote $\textbf{b} = (b_1, \ldots, b_n)$.
-		
-		\item $w$ denotes the index of the winning party and $s$ denotes the same for the second highest bidder.
-		
-		\item $U_i: \strspc^n  \mapsto \mathbb{R}$ is the monetary utility function of a party $P_i$ mapping a strategy profile to a value. Here $\strspc$ represents the strategy space.
-		
-		
-		\item $Z_i \in \mathbb{R}$: is the information utility\footnote{The information utility captures subjective valuation of privacy information by a party. Hence, we do not treat it as a function.} of party $P_i$.
-
-		\item $\adv$: Set of parties caught deviating.
-	\end{itemize}
-	
-	A rational party's utility function evaluates the gains or losses incurred by the party because of its strategic choices. 
-	In addition to monetary considerations, parties are also curious to learn information about the bid values of other parties provided, their own privacy is not compromised in the process. 
-	For this, we consider \emph{information utility} $Z_i$ similar to the notion used in \cite{gks22}. \\
-	
-	
-	In an ideal execution with a trusted party, each party $P_i$ learns the second highest bid value $b_s$ and the identity of the winning party $P_w$. Let this information be valued at $z_i \in \mathbb{R}^+$ by $P_i$. By correctness of our protocol, the information utility realized by $P_i$ by following the protocol honestly is  $z_i$.\\
-    Let $A$ be an arbitrary set of parties other than $P_i$ i.e., $A \subseteq [n]\setminus \{i\}$. Let $b_A$ represent the bid values of parties in set $A$. Then $P_i$ would be interested to learn about some function $f(b_A)$. On the other hand, being privacy sensitive, $P_i$ would be wary of some $j\neq i$ such that $P_j$ learns $g(b_i)$ for some function $g$. We capture these considerations as below:
- \begin{equation} \label{eqn-info-util}
-	Z_i  \begin{cases}
-		= z_i  &\text{if $P_i$ learns no more than output of auction protocol.}\\
-		>z_i  &\text{if $P_i$ learns $f(b_A)$ (as described above)}\\
-		< 0 &\text{if $\exists j\neq i$ such that $P_j$ learns $g(b_i)$ for some function $g$. }\\
-        < z_i  &\text{if protocol aborts.}\\
-	\end{cases}
-  \end{equation}
-	The negative information utility holds even if $P_i$ has additionally learnt about $f(b_k), k\neq i$ for some function $f$. This is to emphasise that a privacy sensitive rational party does not prefer to lose its privacy even if it helps in learning about other parties' bids.\\
-	We further consider a dictionary order of utility for each party:
-	\begin{equation} \label{util-dict-order}
-		(U_i, Z_i)< (U_i', Z_i'), if \left\{\begin{array}{lr}
-			(U_i < U_i') \lor \\
-			\left(\begin{split}(Z_i < Z_i') \land (U_i = U_i')\end{split}\right)        
-		\end{array}\right.
-	\end{equation}  
-	This order captures the assumption regarding rational parties that they value  monetary utility to be higher than the information utility.
-
+  We assume there are $n$ parties that participate in the fair division protocol, denoted by $P_1, P_2, \dots, P_n$. Each party $P_i$ has a valuation function $\val_i$.
  
 	%\input{proto-spec}
 	\section{Our protocol}\label{sec-proto-spec-spa}
@@ -351,30 +311,82 @@
 
 
 \subsection{Construction} \label{proto-spec-spa}
-We describe our FD protocol as a set of algorithms. During setup phase (Algorithm~\ref{alg:setup}), one of the parties $v_d$ is elected as the \emph{lone divider} who divides the given cake $C$ into $n$ parts which are all equal as per its valuation function $v_d$. Each party evaluates these parts. Then parties allocate their secret keys, construct commitments to their valuations and publish the public keys and commitments to the BB.
+We describe our FD protocol as a set of algorithms. During setup phase (Algorithm~\ref{alg:setup}), one of the parties $P_d$ is elected as the \emph{lone divider} who divides the given cake $C$ into $n$ parts which are all equal as per its valuation function $\val_d$. Each party evaluates these parts. Then parties allocate their secret keys, construct commitments to their valuations and publish the public keys and commitments to the BB.
 \begin{algorithm}[ht]
-\caption{Setup Phase}
+\caption{Setup}
 \label{alg:setup}
 \begin{algorithmic}[1]
 	\State Each $P_i$ is initialized: $P_i(v_i)$ 
-    \State $\mathsf{pp} =  (\grp, q, g, h,l,\tau, C)$ // Receive public parameters
+    \State $\mathsf{pp} =  (\grp, q, g,\tau, C)$ // Receive public parameters
     \State Elect one of the parties $P_d$ as the \emph{divider}.
-    \State $P_d$ divides $C$ into $n$ parts such that $v_d(C_i) = v_d(C)/n, \forall i \in [n]$.
-    \State $BB \bbwrite C_i$  // Write to BB.
-    \For{$i = 1$ to $n$, $i \neq d$} 
+    \State $P_d$ divides $C$ into $n$ parts such that $\val_d(C_i) = \val_d(C)/n, \forall i \in [n]$.
+    \State $BB \bbwrite C_i$  
+    \For{$i = 1$ to $n$} 
     	\For{$j = 1$ to $n$} 
-    		\State Compute $V_{ij} = v_i(C_j)$ for all $j \in [n]$
+    		\State Compute $V_{ij} = \val_i(C_j)$ for all $j \in [n]$
     		\State $a_{ij} \smpl \zq$, $c_{ij} = \com(V_{ij}, a_{ij})$     	                   
         	\State $x_{ij}, r_{ij} \smpl \zq$ 
         	\State // Secret keys: $x_{ij}$ for encoding $0$ and $r_{ij}$ for encoding $1$
         	\State $X_{ij} = g^{x_{ij}}$ // Public key
                 \State $BB \bbwrite (X_{ij}, c_{ij})$
-       		\State $Y_{ij} = 
-        \dfrac{\prod_{k=1}^{i-1} X_{kj}}{\prod_{k=i+1}^n X_{kj} }$
+       		
         \EndFor
     \EndFor
 \end{algorithmic}
 \end{algorithm}
+
+\begin{algorithm}[ht]
+\caption{Encoding values}
+\label{alg:encode}
+\begin{algorithmic}[1]
+	\For{$i = 1$ to $n$} 
+        \For{$j = 1$ to $n$}     
+            \State Copy $X_{kj}$ for all $i \neq k \in [n]$
+            \State Compute $Y_{ij} = 
+            \dfrac{\prod_{k=1}^{i-1} X_{kj}}{\prod_{k=i+1}^n X_{kj} }$
+            \If{$V_{ij} \geq \dfrac{\val_i(C)}{n}$}
+                \State $[V_{ij}] = g^{r_{ij}}$
+            \Else
+                \State $[V_{ij}] = Y_{ij}^{x_{ij}}$
+            \EndIf
+            \State $BB \bbwrite [V_{ij}]$
+        \EndFor    
+    \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[ht]
+\caption{Check feasibility}
+\label{alg:feas}
+\begin{algorithmic}[1]
+	\For{$j = 1$ to $n$} 
+        \For{$i = 1$ to $n$}     
+            \State Copy $[V_{ij}]$ from $BB$
+            \State Compute $B_{j} = 
+            \prod_{k=1}^{n} [V_{kj}]$
+        \EndFor    
+    \EndFor
+    \State Compute $m = |\{k \vert k \in [n], B_k = 1\}|$
+    \If{$m > 1$}
+        \State Allocate one of $C_k$ such that, $B_k = 1$ to $P_d$
+        \State Return \textsc{not-feasible}
+    \EndIf
+    \State Return \textsc{feasible}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[ht]
+\caption{Find highest bidder}
+\label{alg:highest bidder}
+\begin{algorithmic}[1]
+	\For{$j = 1$ to $n$} 
+        \State $M_j = \argmax_i(v_{ij})$
+        \State Allocate $c_j$ to $P_{M_j}$
+    \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+
 
 Auction phase (Algorithm~\ref{alg:auction}) runs for $l$ rounds. During each round, parties use ABP to determine their contribution bit for the round and exchange encoded bits through OT. At the end of each round, parties compute the output bit.
 

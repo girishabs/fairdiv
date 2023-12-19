@@ -1,0 +1,469 @@
+%!TEX root = ../main.tex
+
+%------------------------------
+%  Do not add notation macros to this file 
+%  use notation.tex instead
+%-------------------------------
+
+%----- Full version switch --------------------------------------------------------
+\newboolean{submission} 
+\newboolean{finalversion} 
+\newboolean{fullversion} 
+
+\newcommand{\issubmission}{%
+\setboolean{submission}{true}
+\setboolean{finalversion}{false} 
+\setboolean{fullversion}{false} 
+}
+
+\newcommand{\isfinalversion}{%
+\setboolean{submission}{false}
+\setboolean{finalversion}{true} 
+\setboolean{fullversion}{false} 
+}
+
+\newcommand{\isfullversion}{%
+\setboolean{submission}{false}
+\setboolean{finalversion}{false} 
+\setboolean{fullversion}{true} 
+}
+
+
+\newcommand{\submission}[1]{\ifthenelse{\boolean{submission}}{#1}{}}
+\newcommand{\finalversion}[1]{\ifthenelse{\boolean{finalversion}}{#1}{}}
+\newcommand{\fullversion}[1]{\ifthenelse{\boolean{fullversion}}{#1}{}}
+% #1 for submission #2 for finalversion #3 for fullversion
+\newcommand{\whichversion}[3]{\ifthenelse{\boolean{submission}}{#1}{\ifthenelse{\boolean{finalversion}}{#2}{#3}}}
+
+%-------------------------------------------------------------------------------
+\makeatletter %Enable pdf table of contents in the full version
+\fullversion{
+	\renewcommand*\l@section[2]
+	{%
+		\ifnum \c@tocdepth >\z@
+		\addpenalty \@secpenalty
+		\addvspace {1.0em \@plus \p@ }%
+		\setlength \@tempdima {1.5em}%
+		\begingroup
+		\parindent \z@
+		\rightskip \@pnumwidth
+		\parfillskip -\@pnumwidth
+		\leavevmode \bfseries
+		\advance \leftskip \@tempdima
+		\hskip -\leftskip
+		#1\nobreak
+		\hfil
+		\nobreak
+		\hb@xt@ \@pnumwidth {\hss #2\kern -\p@ \kern \p@ }%
+		\par
+		\endgroup
+		\fi
+	}
+}
+\makeatother
+%-------------------------------------------------------------------------------
+
+
+%----- Itemize  ----------------------------------------------------------------
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\be}{\begin{enumerate}}
+%\newcommand{\ee}{\end{enumerate}}
+\newcommand{\bein}{\begin{enumerate*}}
+\newcommand{\eein}{\end{enumerate*}}
+\setlist{itemsep=2pt,topsep=2pt,parsep=2pt,partopsep=2pt} % spacing
+
+%----- Table  ------------------------------------------------------------------
+%\rowcolors{2}{gray!25}{white}
+
+%----- Theorems ----------------------------------------------------------------
+
+%LNCS related theorem environments
+%\spnewtheorem*{theorem*}{Theorem}{\bfseries}{\itshape}
+%\spnewtheorem*{theoremnn}{Theorem}{\bfseries}{\itshape}
+%\spnewtheorem*{lemma*}{Lemma}{\bfseries}{\itshape}
+%\spnewtheorem*{definition*}{Definition}{\bfseries}{\itshape}
+%\spnewtheorem{fancyclaim}{Claim}{\bfseries}{\itshape}
+%\crefname{fancyclaim}{Claim}{Claims}
+%%This only works with LNCS!
+%\makeatletter
+%\spnewtheorem{repeatthm@}{Theorem}{\bfseries}{\itshape}
+%\newenvironment{repeatthm}[1]{%
+%    \def\therepeatthm@{\ref{#1}}
+%    \repeatthm@
+%}
+%{\endrepeatthm@}
+%\spnewtheorem{repeatlem@}{Lemma}{\bfseries}{\itshape}
+%\newenvironment{repeatlem}[1]{%
+%    \def\therepeatlem@{\ref{#1}}
+%    \repeatlem@
+%}
+%{\endrepeatlem@}
+%\spnewtheorem{repeatcor@}{Corollary}{\bfseries}{\itshape}
+%\newenvironment{repeatcor}[1]{%
+%    \def\therepeatcor@{\ref{#1}}
+%    \repeatcor@
+%}
+%{\endrepeatcor@}
+%\makeatother
+%Non-LNCS theorem environments
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{corollary}{Corollary}
+%\newtheorem{definition}{Definition}
+%\newtheorem{assumption}{Assumption}
+%\newtheorem{fancyclaim}{Claim}
+%\crefname{fancyclaim}{Claim}{Claims}
+%\newtheorem{remark}{Remark}
+%\newtheorem{claim}{Claim}
+
+%This might work with amsthm
+%\makeatletter
+%\newtheorem{repeatthm@}{Theorem}{\bfseries}{\itshape}
+%\newenvironment{repeatthm}[1]{%
+%    \def\therepeatthm@{\ref{#1}}
+%    \repeatthm@
+%}
+%{\endrepeatthm@}
+%\makeatother
+
+\newenvironment{claimproof}[1]{\par\noindent\underline{Proof}:\space#1}{\hfill $\blacksquare$}
+
+
+%-------------------------------------------------------------------------------
+%  Magic Stuff below
+%-------------------------------------------------------------------------------
+
+%------ Quote ------------------------------------------------------------------
+\renewcommand{\quote}{\list{}{\rightmargin=\leftmargin\topsep=0pt}\item\relax}
+
+%------ Subsection and Paragraph -----------------------------------------------
+
+% Saving space in case of deadlines
+
+%\makeatletter
+%\renewcommand{\section}{\abovedisplayskip 3\p@ \@plus3\p@ \@minus1\p@%
+%                      \belowdisplayskip 5\p@ \@plus3\p@ \@minus1\p@%
+%                      \abovedisplayshortskip 0pt \@plus2\p@%
+%                      \belowdisplayshortskip 0pt \@plus2\p@ \@minus0\p@%
+%                      \@startsection{section}{1}{\z@}%
+%                       {-10\p@ \@plus -4\p@ \@minus -4\p@}%
+%                       {6\p@ \@plus 4\p@ \@minus 4\p@}%
+%                       {\normalfont\large\bfseries\boldmath
+%                        \rightskip=\z@ \@plus 8em\pretolerance=10000 }}
+%\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
+%                      {-6\p@ \@plus -4\p@ \@minus -4\p@}%
+%                      {2\p@ \@plus 2\p@ \@minus 2\p@}%
+%                      {\normalfont\normalsize\bfseries\boldmath
+%                       \rightskip=\z@ \@plus 8em\pretolerance=10000 }}
+%\renewcommand{\subsubsection}{\@startsection{paragraph}{4}{\z@}%
+%                      {-8\p@ \@plus -4\p@ \@minus -4\p@}%
+%                      {-5\p@ \@plus -0.22em \@minus -0.1em}%
+%                      {\normalfont\normalsize\bfseries\boldmath
+%                      }}
+\renewcommand{\paragraph}[1]{\smallskip\noindent{\bf #1}}
+%\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\z@}%
+%                      {-8\p@ \@plus -4\p@ \@minus -4\p@}%
+%                      {-5\p@ \@plus -0.22em \@minus -0.1em}%
+%                      {\normalfont\normalsize\bf
+%                     }}
+%\makeatother
+\newcommand{\stealspace}{\vspace{-5pt}}
+
+%----- Comments ----------------------------------------------------------------
+\RequirePackage{totcount}
+\RequirePackage{color}
+\RequirePackage[colorinlistoftodos]{todonotes}
+
+\newtotcounter{notecount}
+\newcommand{\notewarning}{%
+\ifnum\totvalue{notecount}>0%
+ \vspace{1ex}
+\begin{center}
+ \begin{tikzpicture}[baseline=(A.south)]
+    \node (A) [] at (0,0){};
+    \node [rounded corners=1pt,rectangle, draw=red, fill=red!20,text=black](B) at (0.1ex,0ex){
+        \Large \raggedright {\bf Warning:} There are still some notes left!
+    };
+ \end{tikzpicture}
+\end{center}
+ \vspace{1ex}
+\fi
+}
+\makeatletter
+\def\myaddcontentsline#1#2#3{%
+  \addtocontents{#1}{\protect\contentsline{#2}{#3}{Section \thesubsection\ at p. \thepage}{}}}
+\renewcommand{\@todonotes@addElementToListOfTodos}{%
+    \if@todonotes@colorinlistoftodos%
+        \myaddcontentsline{tdo}{todo}{{%
+            \colorbox{\@todonotes@currentbackgroundcolor}%
+                {\textcolor{\@todonotes@currentbackgroundcolor}{o}}%
+            \ \@todonotes@caption}}%
+    \else%
+        \myaddcontentsline{tdo}{todo}{{\@todonotes@caption}}%
+   \fi}%
+\newcommand*\mylistoftodos{%
+  \begingroup
+       \setbox\@tempboxa\hbox{Section 9.9 at p. 99}%
+       \renewcommand*\@tocrmarg{\the\wd\@tempboxa}%
+       \renewcommand*\@pnumwidth{\the\wd\@tempboxa}%
+       \listoftodos%
+  \endgroup
+}
+\makeatother
+
+%------------------------------------
+% COLOR
+%------------------------------------
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{mDarkBrown}{HTML}{604c38}
+\definecolor{mDarkTeal}{HTML}{23373b}
+\definecolor{mLightBrown}{HTML}{EB811B}
+\definecolor{mLightGreen}{HTML}{14B03D}
+\definecolor{lightgreen}{rgb}{0.86, 0.93, 0.78}
+\definecolor{textgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bordergreen}{rgb}{0.55, 0.76, 0.74}
+\definecolor{lightblue}{rgb}{0.70, 0.90, 0.99}
+\definecolor{borderblue}{rgb}{0.01, 0.66, 0.96}
+\definecolor{lightamber}{rgb}{1, 0.93, 0.70}
+\definecolor{borderamber}{rgb}{1, 0.76, 0.03}
+\definecolor{lightcolor4}{rgb}{ 0.93, 0.70, 1}
+\definecolor{bordercolor4}{rgb}{0.76, 0.03, 1}
+\definecolor{lightcolor5}{rgb}{0.78,0.86,0.93}
+\definecolor{bordercolor5}{rgb}{0.74,0.55,0.76}
+%Even more Colors
+\definecolor{blueinfo}{RGB}{64, 112, 173}%{rgb}{0.25,0.44,0.68} %blue
+\definecolor{greeninfo}{RGB}{148, 176, 54}%{rgb}{0.58,0.69,0.21} %green
+\definecolor{yellowinfo}{RGB}{240, 189, 82}%{rgb}{0.94,0.74,0.32} %yellow
+\definecolor{redinfo}{RGB}{194, 77, 59}%{rgb}{0.76,0.30,0.23} %red
+\definecolor{devpurple}{RGB}{125, 58, 193}%dark orchid
+\definecolor{implgray}{RGB}{193, 193, 193}
+\definecolor{greencomment}{RGB}{118,191,105}
+\definecolor{bluecomment}{RGB}{105,166,191}
+\definecolor{yellowcomment}{RGB}{239,200,115}
+\definecolor{redcomment}{RGB}{194, 77, 59}
+
+%\hypersetup{linkcolor=}
+\newcommand{\citeColored}[2]{{\hypersetup{citecolor=#1}\cite{#2}}}
+\newcommand{\citeGreen}[1]{\citeColored{codegreen}{#1}}
+\newcommand{\citePurple}[1]{\citeColored{codepurple}{#1}}
+
+\newcommand{\green}[1]{\textcolor{mLightGreen}{#1}}
+\newcommand{\dgreen}[1]{\textcolor{mDarkTeal}{#1}}
+\newcommand{\orange}[1]{\textcolor{mLightBrown}{#1}}
+\newcommand{\dorange}[1]{\textcolor{mDarkBrown}{#1}}
+\newcommand{\purple}[1]{\textcolor{codepurple}{#1}}
+
+\newcommand{\executor}{evaluator }
+\newcommand{\Executor}{Evaluator }
+\newcommand{\pval}{P_{e}}
+
+\ifDraft
+\newcommand{\girisha}[1]{\textcolor{blue}{[{\footnotesize {\bf Girisha:} { {#1}}}]}}
+\newcommand{\bhavana}[1]{\textcolor{red}{[{\footnotesize {\bf Bhavana:} { {#1}}}]}}
+\newcommand{\chaya}[1]{\textcolor{magenta}{[{\footnotesize {\bf Chaya:} { {#1}}}]}}
+\newcommand{\shreyas}[1]{\textcolor{green}{[{\footnotesize {\bf Shreyas:} { {#1}}}]}}
+
+\else
+\newcommand{\girisha}[1]{}
+\newcommand{\bhavana}[1]{}
+\newcommand{\chaya}[1]{}
+\newcommand{\shreyas}[1]{}
+\fi
+
+%Others
+%\newcommand{\replace}[2]{[\textbf{REPLACE}: \textcolor{red}{#1} \textcolor{blue}{#2}]}
+%\newcommand{\remove}[1]{[\textbf{REMOVE}: \textcolor{red}{#1}]}
+\newcommand{\alert}[1]{\textcolor{red}{#1}}
+
+
+%----- Algorithm Environment ---------------------------------------------------
+%Header for Algorithms/Functionalities
+\newcommand{\algoHead}[1]{\vspace{0.2em} \underline{\textbf{#1}} \vspace{0.3em}}
+\newcommand{\algoHeadExt}[2]{\vspace{0.2em} \underline{\textbf{#1} #2} \vspace{0.3em}}
+
+%Multiline Algo-States
+\makeatletter
+\algnewcommand{\ExtendedState}[1]{\State
+\parbox[t]{\dimexpr\linewidth-\ALG@thistlm}{\hangindent=\algorithmicindent\strut\hangafter=3#1\strut}}
+\makeatother
+
+%Algorithms States
+\algnewcommand\algorithmicinput{\textbf{Input:}}
+\algnewcommand\Input{\item[\algorithmicinput]}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+%Algo Comments
+\algrenewcommand{\algorithmiccomment}[1]{{\color{gray}// #1}}
+%Inline ifs
+\algnewcommand{\IIf}[1]{\State\algorithmicif\ #1\ \algorithmicthen}
+\algnewcommand{\EndIIf}{\unskip\ \algorithmicend\ \algorithmicif}
+
+%----- Box Environment -----------------------------------------
+\RequirePackage{color}
+\RequirePackage[most]{tcolorbox}%with most option
+\RequirePackage{totcount}
+%fonteawesome if possible
+
+%fonteawesome if possible
+\IfFileExists{fontawesome.sty}{%
+\RequirePackage{fontawesome}
+}{%Icons Fallback if one cannot use fontawesome
+\providecommand{\faInfoCircle}{\hspace{3pt}\textbf{i}}
+\providecommand{\faExclamationCircle}{\hspace{3pt}\textbf{!}}
+\providecommand{\faExclamationTriangle}{\hspace{3pt}\textbf{!}}
+\providecommand{\faCogs}{\hspace{2pt}\textbf{D}}
+\providecommand{\faComment}{}
+\providecommand{\faHSquare}{\hspace{2pt}\textbf{H}}
+} 
+%----- Protocol Boxes
+% Removed 'center' from the below. Seems to not make any difference
+\newtcolorbox[auto counter]{titlebox}[6][]{
+    enhanced,
+    colframe=black,
+    colback=white,
+    boxrule={#4},
+    arc={#3},
+    auto outer arc,%
+ 	%breakable,
+    pad at break*=0pt,
+    vfill before first,
+    before={\par\medskip\noindent},
+    after={\par\medskip},
+    top=12pt, left=4pt, enlarge top by=6pt,%enlarge bottom by=7pt,%
+    title={\rule[-.3\baselineskip]{0pt}{\baselineskip}\normalsize\sffamily\bfseries #2}, 
+    varwidth boxed title*=-10pt, 
+   attach boxed title to top left={yshift=-10pt,xshift=10pt}, 
+   coltitle=black,
+    boxed title style={colback=white,boxrule={#6},arc={#5},auto outer arc},
+    #1
+}
+
+%\newtcolorbox[auto counter,crefname={Protocol}{Protocols}]{protbox}[6][]{
+%    enhanced,
+%    colframe=black,
+%    colback=white,
+%    boxrule={#4},
+%    arc={#3},
+%    auto outer arc,%
+% 	%breakable,
+%    pad at break*=0pt,
+%    vfill before first,
+%    before={\par\medskip\noindent},
+%    after={\par\medskip},
+%    top=12pt, left=4pt, enlarge top by=6pt,%enlarge bottom by=7pt,%
+%    title={\rule[-.3\baselineskip]{0pt}{\baselineskip}\normalsize\sffamily\bfseries #2}, 
+%    varwidth boxed title*=-10pt, 
+%   attach boxed title to top left={yshift=-10pt,xshift=10pt}, 
+%   coltitle=black,
+%    boxed title style={colback=white,boxrule={#6},arc={#5},auto outer arc},
+%    #1
+%}
+
+\newenvironment{systembox}[1]
+{\vspace{\baselineskip}\begin{titlebox}{Functionality \normalfont #1}{2.5pt}{1pt}{3.5pt}{1pt}}
+{\end{titlebox}}
+
+\newenvironment{protocolbox}[2][]
+{\begin{protbox}[#1]{Protocol~\thetcbcounter: \normalfont #2}{0.5pt}{0.5pt}{1pt}{0.75pt}}
+{\end{protbox}}
+
+ \newenvironment{processbox}[1]
+{\begin{titlebox}{Process \normalfont #1}{0.5pt}{0.5pt}{1pt}{0.75pt}}
+{\end{titlebox}}
+
+\newenvironment{algobox}[1]
+{\begin{titlebox}{Algorithm \normalfont #1}{0.5pt}{0.5pt}{1pt}{0.75pt}}
+{\end{titlebox}}
+%{\begin{titlebox}{Algorithm \normalfont #1}{commonbox}{normal}}
+%{\end{titlebox}}
+
+\newenvironment{funcbox}[1]
+{\begin{titlebox}{Function \normalfont #1}{0.5pt}{0.5pt}{1pt}{0.75pt}}
+{\end{titlebox}}
+
+\newenvironment{gamebox}[1]
+{\begin{titlebox}{Game \normalfont #1}{0.5pt}{0.5pt}{1pt}{0.75pt}}
+{\end{titlebox}}
+
+\newenvironment{oraclebox}[1]
+{\begin{titlebox}{Oracle \normalfont #1}{0.5pt}{0.5pt}{1pt}{0.75pt}}
+{\end{titlebox}}
+
+%----- Allow subsubsection ----------------------------
+\setcounter{secnumdepth}{3}
+
+%----- Reference magic ---------------------------------------------------------
+%Enable reference of descriptions
+\makeatletter
+\let\orgdescriptionlabel\descriptionlabel
+\renewcommand*{\descriptionlabel}[1]{%
+  \let\orglabel\label
+  \let\label\@gobble
+  \phantomsection
+  \edef\@currentlabel{#1}%
+  %\edef\@currentlabelname{#1}%
+  \let\label\orglabel
+  \orgdescriptionlabel{#1}%
+}
+\makeatother
+
+%----- 2P protocol ---------------------------------------------------------
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{arydshln}
+%--Define protocol environment
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\newcolumntype{C}[1]{>{\PreserveBackslash\centering}b{#1}}
+\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}b{#1}}
+\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}b{#1}}
+\newenvironment{twopartyprotocol}{%
+\renewcommand{\arraystretch}{1.5}
+\bigskip\par
+\tabularx{\textwidth}{L{0.3\textwidth} C{0.32\textwidth} R{0.3\textwidth}}
+}{%
+\endtabularx %cannot use \begin{tabularx}\end{tabularx} within environments
+\bigskip
+}
+\newcommand{\TPPtopline}[3]{#1&#2&#3\\\hline&&\\[-\medskipamount]}%Header
+%\newcommand{\TPPfirstline}[3]{\rule[2ex]{0pt}{3ex}#1&#2&#3\\}%comes with spacing on top
+\newcommand{\TPPline}[3]{#1&#2&#3\\}
+\newlength{\TPParrow}
+\settowidth{\TPParrow}{\scriptsize$a really long message over the arrow$} %this defines the (min) length of arrows
+\newcommand*{\TPPrightarrow}[1]{\xmath{\xrightarrow{\mathmakebox[\TPParrow]{#1}}}} %use substack for multi line
+\newcommand*{\TPPleftarrow}[1]{\xmath{\xleftarrow{\mathmakebox[\TPParrow]{#1}}}}
+
+% Macros specific to Second Price auctions
+\newcommand{\cb}{\mathsf{cb}} % For choice bit 
+
+\newcommand{\bcot}{\mathsf{bcot}} % For bit code shared using OT
+\newcommand{\bcbb}{\mathsf{bcbb}} % For bit code written to BB 
+\newcommand{\zo}{{0 \rightarrow 1}}
+\newcommand{\oz}{{1 \rightarrow 0}}
+\newcommand{\zz}{{0 \rightarrow 0}}
+\newcommand{\oo}{{1 \rightarrow 1}}
+\newcommand{\cals}{\mathcal{S}}
+\newcommand{\calc}{\mathcal{C}}
+\newcommand{\calf}{\mathcal{F}}
+\newcommand{\calr}{\mathcal{R}}
+\newcommand{\calh}{\mathcal{H}}
+\newcommand{\sfm}{\mathsf{M}}
+\newcommand{\sfr}{\mathsf{R}}
+\newcommand{\sfc}{\mathsf{C}}
+\newcommand{\cbits}{\mathsf{cbits}}
+\newcommand{\crh}{\mathsf{hash}}
+\newcommand{\com}{\mathsf{Com}}
+\newcommand{\zq}{\mathbb{Z}_q}
+\newcommand{\grp}{\mathbb{G}}
+\newcommand{\otr}{\mathsf{otr}}
+\newcommand{\ots}{\mathsf{ots}}
+\newcommand{\strspc}{\Phi}
+\newcommand{\view}{\mathsf{View}}
+\newcommand{\pay}{\overset{\small pay} {\longleftarrow}}
+\newcommand{\smpl}{\overset{\small \$} {\longleftarrow}}
+\newcommand{\bbwrite}{\overset{\small write} {\longleftarrow}} 
+\newcommand{\coll}{\mathsf{coll}_{\calc}}
+\newcommand{\calv}{\mathcal{V}}
+\newcommand{\val}{\calv}

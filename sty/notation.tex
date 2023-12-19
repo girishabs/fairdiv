@@ -1,0 +1,139 @@
+% !TEX root = ../main.tex
+%
+%  ADD NEW NOTATION at the bottom
+%
+%-------------------------------------------------------------------------------
+%  Font and Notation
+%-------------------------------------------------------------------------------
+\newcommand{\xmath}[1]{\ensuremath{#1}\xspace}
+
+%-------------------------------------------------------------------------------
+%  Fonts used in this project
+%-------------------------------------------------------------------------------
+\newcommand{\command}[1]{\textsc{#1}}
+\newcommand{\cmd}[1]{\command{#1}}
+\newcommand{\variable}[1]{\mathit{#1}}
+\newcommand{\parameter}[1]{\mathtt{#1}}
+\newcommand{\protocol}[1]{\xmath{\mathsf{#1}}}
+%\renewcommand{\assumption}[1]{\mathsf{#1}}}
+\newcommand{\emphnew}[1]{\textcolor{orange}{#1}}
+
+%-------------------------------------------------------------------------------
+% Global parameters 
+%-------------------------------------------------------------------------------
+%Security param
+\newcommand{\secp}{\lambda}
+\renewcommand{\secparam}{\secpar}
+\newcommand{\unaryl}{\xmath{1^{\lambda}}}
+\renewcommand{\negl}{\mathsf{negl}}
+\renewcommand{\poly}{\mathsf{poly}}
+%Security
+\newcommand{\Advantage}[2]{\mathbf{Adv}^{#1}_{#2}}
+\newcommand{\game}[1]{\mathbf{G}_{#1}}
+\renewcommand{\bad}{\variable{bad}}
+\newcommand{\ctr}{\variable{ctr}}
+\newcommand{\dst}{\xmath{\mathcal{D}}}
+\renewcommand{\game}{\xmath{\mathsf{G}}}
+%Adversary
+\newcommand{\Adv}{\xmath{\mathcal{A}}}
+\newcommand{\Bdv}{\xmath{\mathcal{B}}}
+
+%-------------------------------------------------------------------------------
+%  Grammar/Symbols
+%-------------------------------------------------------------------------------
+\newcommand{\etal}{{et al.}\xspace}
+\newcommand{\ie}{{i.e.}\xspace}
+\newcommand{\eg}{{e.g.}\xspace}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+%-------------------------------------------------------------------------------
+%  General notation
+%-------------------------------------------------------------------------------
+%Fields, sets, functions
+\newcommand{\N}{\xmath{\mathbb{N}}}
+\newcommand{\Z}{\xmath{\mathbb{Z}}}
+\providecommand{\G}{\xmath{\mathbb{G}}}
+\newcommand{\bits}{\xmath{\left\{0,1\right\}}}
+\newcommand{\bitstrings}{\xmath{\bits^*}}
+\newcommand{\union}{\ensuremath{\cup}}  
+\newcommand{\ot}{\leftarrow}
+%\newcommand{\tildehat}[1]{\tilde{\hat #1}}
+\newcommand{\tildecheck}[1]{\tilde{\check #1}}
+\newcommand{\defeq}{\coloneqq}
+\newcommand{\compeq}{\xmath{\overset{c}{\equiv}}}
+\newcommand{\outputs}{\rightarrow}
+\renewcommand{\gets}{\leftarrow}
+\newcommand{\rgets}{\xleftarrow{\$}}
+\newcommand{\textand}{\;\text{and}\;}
+\newcommand{\textor}{\;\text{or}\;}
+\newcommand{\textfor}{\;\text{for}\;}
+\newcommand{\textwhere}{\;\text{where}\;}
+\newcommand{\textst}{\;\text{s.t.}\;}
+
+%\renewcommand{\vec}{\mathbf} % vector
+\newcommand{\vect}[1]{\mathbf{#1}} % vector
+% Conditional probability
+\newcommand{\prcond}[2]{\prob{\begin{matrix*}[l]#1\end{matrix*}\;\middle\vert\;\begin{matrix}#2\end{matrix}}}
+% Set with predicates
+\newcommand{\setpred}[2]{\xmath{\set{\begin{matrix}#1\end{matrix}\,:\ \begin{matrix}#2\end{matrix}}}}
+%Nice empty set
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+%Inner product
+\DeclarePairedDelimiter\ip{\langle}{\rangle}
+% set:
+ \newcommand{\magicset}{\mathcal{S}}
+%Nicer set:
+\newcommand\SetSymbol[1][]{
+	\nonscript\:
+	#1\vert
+	\allowbreak
+	\nonscript\:
+	\mathopen{}
+}
+\providecommand\given{}
+\DeclarePairedDelimiterX\Set[1]{\lbrace}{\rbrace}{
+	\renewcommand\given{\SetSymbol[\delimsize]}
+	#1
+}
+
+%-------------------------------------------------------------------------------
+%  Algorithms
+%-------------------------------------------------------------------------------
+
+
+% Signature
+
+
+% Protocol
+
+% Proof systems
+
+
+
+% ur
+\mathchardef\mhyphen="2D
+
+
+% NIZK
+
+
+% AGM
+\newcommand{\algadv}{\Adv_{\mathsf{alg}}}
+\newcommand{\algprv}{\cP_{\mathsf{alg}}}
+
+
+%-------------------------------------------------------------------------------
+%  Security proof
+%-------------------------------------------------------------------------------
+%Rest
+\providecommand{\experiment}{\pcalgostyle{Exp}}
+\newcommand{\advan}{\mathbf{Adv}}
+
+\newcommand{\cset}{\mathsf{Ch}}
+
+%-------------------------------------------------------------------------------
+%  matrix/vectors
+%-------------------------------------------------------------------------------
+%\input{vecmat}
